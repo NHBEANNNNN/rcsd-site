@@ -4,7 +4,7 @@
     "name": "扎克 道森",
     "rank": "警长（Sheriff)",
     "callsign": "RC-1",
-    "division": "Patrol",
+    "division": "Administration",
     "badge": "0001",
     "status": "Active",
     "photo": "assets/img/ZHA KE.png",
@@ -20,5 +20,16 @@
   "status": "Active",
   "photo": "assets/img/nb.png",
   "bio": "负责警校，财务，行政管理。"
+  }, 
+  {
+  "id": "3",
+  "name": "阿德里安 耶罗",
+  "rank": "上尉（Captain）",
+  "callsign": "RC-81",
+  "division": "Patrol",
+  "badge": "0002",
+  "status": "Active",
+  "photo": "assets/img/ad.png",
+  "bio": "普巡组，普巡战术顾问。"
 }
 ]
