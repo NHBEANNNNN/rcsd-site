@@ -77,17 +77,6 @@
    "bio": "普巡。"
   }, 
   {
-   "id": "7",
-   "name": "迈尔斯 布莱克",
-   "rank": "副警长（Vice Sheriff）",
-   "callsign": "RC-42",
-   "division": "Patrol",
-   "badge": "0042",
-   "status": "Active",
-   "photo": "assets/img/mb.png",
-   "bio": "普巡。"
-  },  
-  {
    "id": "8",
    "name": "杰瑞 莱斯特",
    "rank": "地区指挥官（Regional Commander）",
