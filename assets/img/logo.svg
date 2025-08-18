@@ -1,0 +1,4 @@
+<svg xmlns='http://www.w3.org/2000/svg' width='150' height='150'>
+<circle cx='75' cy='75' r='70' fill='#0f1c0f' stroke='#6ac56a' stroke-width='6'/>
+<text x='50%' y='50%' text-anchor='middle' dy='.3em' font-size='28' fill='#6ac56a' font-family='Arial' font-weight='bold'>RCSD</text>
+</svg>

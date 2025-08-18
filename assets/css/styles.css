@@ -1,0 +1,10 @@
+
+:root{
+  --bg:#0c0f0c; --card:#131a13; --muted:#9fb3a0;
+  --txt:#e6f6e6; --accent:#6ac56a; --accent-2:#3d8a3d;
+  --border:#2a3a2a;
+}
+body{margin:0;padding:0;background:var(--bg);color:var(--txt);font-family:Arial}
+h1{color:var(--accent)}
+.nav{background:#0f1c0f;padding:12px}
+.footer{border-top:1px solid var(--border);padding:10px;color:var(--muted)}
