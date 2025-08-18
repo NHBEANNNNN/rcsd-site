@@ -32,4 +32,26 @@
    "photo": "assets/img/ad.png",
    "bio": "普巡组，普巡战术顾问。"
   }
+   {
+   "id": "4",
+   "name": "威廉 布朗",
+   "rank": "下士长（Corporal）",
+   "callsign": "RC-27",
+   "division": "Patrol",
+   "badge": "0027",
+   "status": "Active",
+   "photo": "assets/img/wb.png",
+   "bio": "普巡组，普巡一级教官。"
+  }, 
+  {
+   "id": "5",
+   "name": "杰瑞 马斯克",
+   "rank": "上尉（Captain）",
+   "callsign": "RC-59",
+   "division": "Patrol",
+   "badge": "0059",
+   "status": "Active",
+   "photo": "assets/img/jm.png",
+   "bio": "普巡组，普巡押运员。"
+  } 
 ]
