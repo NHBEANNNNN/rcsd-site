@@ -64,5 +64,27 @@
    "status": "Active",
    "photo": "assets/img/qn.png",
    "bio": "特别响应队，队员。"
+  }, 
+  {
+   "id": "7",
+   "name": "迈尔斯 布莱克",
+   "rank": "副警长（Vice Sheriff）",
+   "callsign": "RC-42",
+   "division": "Special Response Team",
+   "badge": "0042",
+   "status": "Active",
+   "photo": "assets/img/qn.png",
+   "bio": "普巡。"
+  }, 
+  {
+   "id": "7",
+   "name": "迈尔斯 布莱克",
+   "rank": "副警长（Vice Sheriff）",
+   "callsign": "RC-42",
+   "division": "Special Response Team",
+   "badge": "0042",
+   "status": "Active",
+   "photo": "assets/img/qn.png",
+   "bio": "普巡。"
   } 
 ]
