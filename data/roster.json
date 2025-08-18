@@ -53,5 +53,16 @@
    "status": "Active",
    "photo": "assets/img/jm.PNG",
    "bio": "普巡组，普巡押运员。"
+  },  
+  {
+   "id": "5",
+   "name": "乔丹 妮盖",
+   "rank": "二阶治安官（Deputy II）",
+   "callsign": "RC-60",
+   "division": "Special Response Team",
+   "badge": "0060",
+   "status": "Active",
+   "photo": "assets/img/qn.png",
+   "bio": "特别响应队，队员。"
   } 
 ]
