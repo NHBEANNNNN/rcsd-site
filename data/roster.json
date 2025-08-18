@@ -1,13 +1,13 @@
 [
   {
     "id": "1",
-    "name": "William Brown",
-    "rank": "Sheriff",
+    "name": "扎克 道森",
+    "rank": "警长（Chief)",
     "callsign": "RC-1",
     "division": "Patrol",
     "badge": "0001",
     "status": "Active",
     "photo": "assets/img/placeholder_officer.svg",
-    "bio": "部门负责人。总体指挥与对外事务，负责战略规划与问责。"
+    "bio": "治安官办公室局长，管理警局一切事务。"
   }
 ]
