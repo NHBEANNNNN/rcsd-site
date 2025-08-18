@@ -26,11 +26,11 @@
    "name": "阿德里安 耶罗",
    "rank": "上尉（Captain）",
    "callsign": "RC-81",
-   "division": "Patrol",
+   "division": "Special Response Team",
    "badge": "0081",
    "status": "Active",
    "photo": "assets/img/ad.png",
-   "bio": "普巡组，普巡战术顾问。"
+   "bio": "特别响应队，战术顾问。"
   },
    {
    "id": "4",
@@ -81,10 +81,32 @@
    "name": "迈尔斯 布莱克",
    "rank": "副警长（Vice Sheriff）",
    "callsign": "RC-42",
-   "division": "Special Response Team",
+   "division": "Patrol",
    "badge": "0042",
    "status": "Active",
-   "photo": "assets/img/qn.png",
+   "photo": "assets/img/mb.png",
    "bio": "普巡。"
+  },  
+  {
+   "id": "8",
+   "name": "杰瑞 莱斯特",
+   "rank": "地区指挥官（Regional Commander）",
+   "callsign": "RC-61",
+   "division": "Special Response Team",
+   "badge": "0061",
+   "status": "Active",
+   "photo": "assets/img/jr.png",
+   "bio": "特别响应队，队长，警械教官，重大案件总指挥。"
+  }, 
+   {
+   "id": "9",
+   "name": "史蒂夫 杰克尔",
+   "rank": "实习治安官（Deputy Sheriff Trainee）",
+   "callsign": "RC-62",
+   "division": "Patrol",
+   "badge": "0062",
+   "status": "Active",
+   "photo": "assets/img/jr.png",
+   "bio": "实习治安官。"
   } 
 ]
