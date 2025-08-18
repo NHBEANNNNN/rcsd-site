@@ -31,5 +31,16 @@
   "status": "Active",
   "photo": "assets/img/ad.png",
   "bio": "普巡组，普巡战术顾问。"
-  }
+  }, 
+  {
+  "id": "4",
+  "name": "威廉 布朗",
+  "rank": "下士长（Corporal）",
+  "callsign": "RC-27",
+  "division": "Patrol",
+  "badge": "0027",
+  "status": "Active",
+  "photo": "assets/img/wb.png",
+  "bio": "普巡组，普巡一级教官。"
+  }, 
 ]
