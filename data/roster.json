@@ -97,5 +97,16 @@
    "status": "Active",
    "photo": "assets/img/s1.png",
    "bio": "实习治安官。"
+  }, 
+  {
+   "id": "10",
+   "name": "大卫 沃尔克",
+   "rank": "二阶治安官（Deputy II）",
+   "callsign": "RC-63",
+   "division": "Special Response Team",
+   "badge": "0063",
+   "status": "Active",
+   "photo": "assets/img/dw.png",
+   "bio": "特别响应队，队员。"
   } 
 ]
