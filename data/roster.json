@@ -70,11 +70,11 @@
    "name": "迈尔斯 布莱克",
    "rank": "副警长（Vice Sheriff）",
    "callsign": "RC-42",
-   "division": "Special Response Team",
+   "division": "Patrol",
    "badge": "0042",
    "status": "Active",
    "photo": "assets/img/mb.png",
-   "bio": "普巡。"
+   "bio": "普巡，行动指挥，招募主管，。"
   }, 
   {
    "id": "8",
