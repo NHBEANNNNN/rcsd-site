@@ -44,8 +44,8 @@
    "bio": "特别响应队，战术顾问。"
   },
   {
-   "id": "4",
-   "name": "阿德里安 耶罗",
+   "id": "5",
+   "name": "史蒂芬 安迪",
    "rank": "上尉（Captain）",
    "callsign": "RC-40",
    "division": "Patrol",
@@ -55,7 +55,7 @@
    "bio": "普巡组，普巡主管，基本案件指挥。"
   },
   {
-   "id": "5",
+   "id": "6",
    "name": "威廉 布朗",
    "rank": "下士长（Corporal）",
    "callsign": "RC-27",
@@ -66,7 +66,7 @@
    "bio": "普巡组，普巡一级教官。"
   }, 
   {
-   "id": "6",
+   "id": "7",
    "name": "杰瑞 马斯克",
    "rank": "上尉（Captain）",
    "callsign": "RC-59",
@@ -77,7 +77,7 @@
    "bio": "普巡组，普巡押运员。"
   },  
   {
-   "id": "7",
+   "id": "8",
    "name": "乔丹 妮盖",
    "rank": "二阶治安官（Deputy II）",
    "callsign": "RC-60",
@@ -88,7 +88,7 @@
    "bio": "特别响应队，队员。"
   }, 
   {
-   "id": "8",
+   "id": "9",
    "name": "迈尔斯 布莱克",
    "rank": "副警长（Vice Sheriff）",
    "callsign": "RC-42",
@@ -99,7 +99,7 @@
    "bio": "特别响应队，队员，。"
   }, 
   {
-   "id": "9",
+   "id": "10",
    "name": "杰瑞 莱斯特",
    "rank": "地区指挥官（Regional Commander）",
    "callsign": "RC-61",
@@ -110,7 +110,7 @@
    "bio": "特别响应队，队长，警械教官，重大案件总指挥。"
   }, 
   {
-   "id": "10",
+   "id": "11",
    "name": "史蒂夫 杰克尔",
    "rank": "实习治安官（Deputy Sheriff Trainee）",
    "callsign": "RC-62",
@@ -121,7 +121,7 @@
    "bio": "正式治安官。"
   }, 
   {
-   "id": "11",
+   "id": "12",
    "name": "大卫 沃尔克",
    "rank": "二阶治安官（Deputy II）",
    "callsign": "RC-63",
