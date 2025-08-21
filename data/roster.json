@@ -43,7 +43,18 @@
    "photo": "assets/img/ad.png",
    "bio": "特别响应队，战术顾问。"
   },
-   {
+  {
+   "id": "4",
+   "name": "阿德里安 耶罗",
+   "rank": "上尉（Captain）",
+   "callsign": "RC-40",
+   "division": "Patrol",
+   "badge": "0040",
+   "status": "Active",
+   "photo": "assets/img/sd.png",
+   "bio": "普巡组，普巡主管，基本案件指挥。"
+  },
+  {
    "id": "5",
    "name": "威廉 布朗",
    "rank": "下士长（Corporal）",
@@ -107,7 +118,7 @@
    "badge": "0062",
    "status": "Active",
    "photo": "assets/img/s1.png",
-   "bio": "实习治安官。"
+   "bio": "正式治安官。"
   }, 
   {
    "id": "11",
@@ -116,7 +127,7 @@
    "callsign": "RC-63",
    "division": "Special Response Team",
    "badge": "0063",
-   "status": "Active",
+   "status": "Suspended",
    "photo": "assets/img/dw.png",
    "bio": "特别响应队，队员。"
   } 
