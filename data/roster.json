@@ -6,34 +6,45 @@
     "callsign": "RC-1",
     "division": "Administration",
     "badge": "0001",
-    "status": "Active",
+    "status": "Retire",
     "photo": "assets/img/ZHA KE.png",
-    "bio": "治安官办公室局长，管理警局一切事务。"
+    "bio": "第一任治安官办公室警长。"
   },
   {
    "id": "2",
    "name": "尼恩 比恩（N.Bean）",
-   "rank": "副警长（Vice Sheriff）",
+   "rank": "警长（Sheriff）",
    "callsign": "RC-43",
    "division": "Administration",
    "badge": "0002",
    "status": "Active",
    "photo": "assets/img/nb.png",
-   "bio": "负责警校，财务，行政管理。"
+   "bio": "统筹警队的人事任命、晋升制度、纪律规范，决定副处长和助理处长的分工，监督各大部门的运作，确保警队的预算、资源分配合理。"
   },
   {
     "id": "3",
     "name": "比格 考克",
-    "rank": "警务处处长（Commissioner of Police)",
+    "rank": "副警长（管理）（Vice Sheriff)",
     "callsign": "RC-91",
     "division": "Administration",
     "badge": "0091",
     "status": "Active",
     "photo": "assets/img/bd.png",
-    "bio": "管理警局会议，警务管理，警局总务管理。"
+    "bio": "人事管理（警员招募、晋升、纪律、福利）财务与预算（警队年度开支、装备采购）培训与教育（警校、进修课程、领导力发展）。"
+  },
+  { 
+   "id": "4",
+   "name": "迈尔斯 布莱克",
+   "rank": "副警长（行动）（Vice Sheriff）",
+   "callsign": "RC-42",
+   "division": "Administration",
+   "badge": "0042",
+   "status": "Active",
+   "photo": "assets/img/mb.png",
+   "bio": "专门负责一线执法与治安行动，确保街头巡逻、刑事侦查、特警、反恐、交通等前线运作顺畅。"
   },
   {
-   "id": "4",
+   "id": "5",
    "name": "阿德里安 耶罗",
    "rank": "上尉（Captain）",
    "callsign": "RC-81",
@@ -44,20 +55,9 @@
    "bio": "特别响应队，战术顾问。"
   },
   {
-   "id": "5",
-   "name": "史蒂芬 安迪",
-   "rank": "下士长（Corporal）",
-   "callsign": "RC-40",
-   "division": "Patrol",
-   "badge": "0040",
-   "status": "Active",
-   "photo": "assets/img/sd.png",
-   "bio": "普巡组，普巡主管，基本案件指挥。"
-  },
-  {
    "id": "6",
    "name": "威廉 布朗",
-   "rank": "下士长（Corporal）",
+   "rank": "二阶治安官（Deputy II）",
    "callsign": "RC-27",
    "division": "Patrol",
    "badge": "0027",
@@ -79,7 +79,7 @@
   {
    "id": "8",
    "name": "乔丹 妮盖",
-   "rank": "二阶治安官（Deputy II）",
+   "rank": "下士长（Corporal）",
    "callsign": "RC-60",
    "division": "Special Response Team",
    "badge": "0060",
@@ -88,20 +88,9 @@
    "bio": "特别响应队，队员。"
   }, 
   {
-   "id": "9",
-   "name": "迈尔斯 布莱克",
-   "rank": "副警长（Vice Sheriff）",
-   "callsign": "RC-42",
-   "division": "Special Response Team",
-   "badge": "0042",
-   "status": "Active",
-   "photo": "assets/img/mb.png",
-   "bio": "特别响应队，队员，。"
-  }, 
-  {
-   "id": "10",
+   "id": "9,
    "name": "史蒂夫 杰克尔",
-   "rank": "实习治安官（Deputy Sheriff Trainee）",
+   "rank": "一阶治安官（Deputy II）",
    "callsign": "RC-62",
    "division": "Patrol",
    "badge": "0062",
@@ -110,7 +99,7 @@
    "bio": "正式治安官。"
   }, 
   {
-   "id": "11",
+   "id": "10",
    "name": "大卫 沃尔克",
    "rank": "二阶治安官（Deputy II）",
    "callsign": "RC-63",
