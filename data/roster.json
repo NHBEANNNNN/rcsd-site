@@ -90,12 +90,23 @@
   {
    "id": "9",
    "name": "史蒂夫 杰克尔",
-   "rank": "一阶治安官（Deputy II）",
+   "rank": "一阶治安官（Deputy I）",
    "callsign": "RC-62",
    "division": "Patrol",
    "badge": "0062",
    "status": "Active",
    "photo": "assets/img/s1.png",
+   "bio": "一阶治安官。"
+  }, 
+  {
+   "id": "10",
+   "name": "史密斯 林肯",
+   "rank": "一阶治安官（Deputy I）",
+   "callsign": "RC-39",
+   "division": "Patrol",
+   "badge": "0039",
+   "status": "Active",
+   "photo": "assets/img/sl.png",
    "bio": "一阶治安官。"
   }
 ]
