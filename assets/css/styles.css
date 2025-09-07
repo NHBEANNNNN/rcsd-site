@@ -1,42 +1,124 @@
-
 :root{
-  --bg:#e9f1fb; --surface:#111111; --card:#111111;
-  --muted:#C8A951; --txt:#ffffff; --accent:#041E42; --accent-2:#1F3B73;
-  --border:#ffffff; --warn:#C8A951; --danger:#ff6b6b;
+  /* 主题色（LSPD） */
+  --bg:#e9f1fb;          /* 页面整体浅蓝 */
+  --surface:#ffffff;     /* 区块/卡片白底 */
+  --card:#ffffff;
+  --txt:#0B0F14;         /* 正文深灰黑 */
+  --muted:#C8A951;       /* 次要文字：金色 */
+  --accent:#041E42;      /* 深蓝主色 */
+  --accent-2:#1F3B73;    /* 次蓝（hover/强调） */
+  --border:#d0d7e2;      /* 浅灰蓝边框 */
+
+  --warn:#C8A951;        /* 金色提示/徽章 */
+  --danger:#FF6B6B;      /* 错误/危险 */
 }
+
 *{box-sizing:border-box}
-html,body{margin:0;padding:0;background:var(--bg);color:var(--txt);font-family:Inter,system-ui,Segoe UI,Arial}
-a{color:var(--accent);text-decoration:none}
-a:hover{text-decoration:underline}
-.container{max-width:1100px;margin:0 auto;padding:24px}
-.nav{position:sticky;top:0;background:rgba(11,15,11,.92);backdrop-filter:saturate(130%) blur(8px);border-bottom:1px solid var(--border);z-index:50}
-.nav .bar{display:flex;gap:16px;align-items:center;padding:12px 24px}
-.nav .brand{display:flex;gap:12px;align-items:center}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--txt);
+  font-family:Inter,system-ui,Segoe UI,Arial,-apple-system,BlinkMacSystemFont,"Noto Sans SC",sans-serif}
+
+/* 链接：深蓝 -> hover 金色下划线 */
+a{color:var(--accent);text-decoration:none;transition:color .15s ease}
+a:hover{color:var(--accent-2);text-decoration:underline;text-decoration-color:var(--warn)}
+
+/* 版心 */
+.container{max-width:1100px;margin:0 auto;padding:32px 16px}
+
+/* 顶部导航 */
+.nav{position:sticky;top:0;background:var(--accent);border-bottom:1px solid rgba(0,0,0,.06);
+  backdrop-filter:saturate(130%) blur(6px);z-index:50}
+.nav .bar{display:flex;gap:12px;align-items:center;padding:12px 24px}
+.nav .brand{display:flex;gap:12px;align-items:center;color:#fff}
 .nav .brand img{width:40px;height:40px}
-.nav .title{font-weight:800;letter-spacing:.4px}
-.nav .links{margin-left:auto;display:flex;gap:14px;flex-wrap:wrap}
-.nav .links a{padding:8px 10px;border-radius:10px}
-.nav .links a.active,.nav .links a:hover{background:#0e150e;border:1px solid var(--border)}
-.banner{background:#0e150e;border-bottom:1px solid var(--border);padding:8px 24px;color:var(--muted);font-size:14px}
-.banner b{color:var(--txt)}
-.hero{display:grid;grid-template-columns:1.1fr .9fr;gap:24px;align-items:center;padding:36px 0}
-.hero .card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:22px}
-.hero h1{font-size:40px;line-height:1.1;margin:0 0 10px}
-.hero p{margin:0 0 12px;color:var(--muted)}
-.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:8px}
-.kpis div{background:#0e150e;border:1px solid var(--border);border-radius:12px;padding:12px;color:var(--muted)}
-.quick{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
-.card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:16px}
-.card h3{margin:0 0 6px}
-.badge{display:inline-block;background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#111;font-weight:800;border-radius:999px;padding:6px 10px;font-size:12px}
-.notice{background:#0e150e;border:1px dashed var(--border);color:var(--muted);border-radius:12px;padding:12px;margin:10px 0}
+.nav .title{font-weight:800;letter-spacing:.4px;color:#fff}
+.nav .links{margin-left:auto;display:flex;gap:10px;flex-wrap:wrap}
+.nav .links a{padding:8px 10px;border-radius:12px;color:#fff;opacity:.95;transition:all .15s ease}
+.nav .links a.active,
+.nav .links a:hover{opacity:1;outline:0;border:1px solid #fff}
+
+/* 横幅/公告条 */
+.banner{background:var(--surface);color:var(--txt);border-bottom:1px solid var(--border);
+  padding:8px 24px;font-size:14px}
+
+/* Hero 区 */
+.hero{display:grid;grid-template-columns:1fr .9fr;gap:24px;align-items:center;padding:36px 0}
+.hero .card{background:var(--surface);border:1px solid var(--border);border-radius:16px;
+  padding:22px;box-shadow:0 8px 24px rgba(4,30,66,.06)}
+.hero h1{font-size:40px;line-height:1.2;margin:4px 0 12px;color:var(--txt)}
+.hero p{margin:0 0 12px;color:var(--accent-2)}
+
+/* 栅格卡片（列表页/首页下部） */
+.grid,.quick,.kpis{display:grid;gap:16px}
+.grid{grid-template-columns:repeat(3,1fr)}
+.quick{grid-template-columns:repeat(3,1fr)}
+.kpis{grid-template-columns:repeat(3,1fr);margin-top:8px}
+
+/* 通用卡片样式 */
+.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px;
+  color:var(--txt);box-shadow:0 6px 18px rgba(4,30,66,.06)}
+.card h3{margin:6px 0 8px;font-size:18px}
+.card p,.card li{line-height:1.7}
+
+/* 小徽章 */
+.badge{display:inline-block;background:linear-gradient(135deg,var(--accent),var(--accent-2));
+  color:#fff;font-weight:800;border-radius:999px;padding:6px 10px;font-size:12px}
+
+/* 提示块 */
+.notice{background:#f8fbff;border:1px solid var(--border);border-radius:12px;padding:12px;margin:10px 0}
+
+/* 列表容器 */
 .list{display:grid;gap:10px}
-.list a{display:block;background:#0e150e;border:1px solid var(--border);border-radius:12px;padding:10px}
-.footer{border-top:1px solid var(--border);padding:18px 24px;color:var(--muted);font-size:14px}
-.grid{display:grid;gap:16px;grid-template-columns:repeat(3,1fr)}
-table{width:100%;border-collapse:collapse;background:#0f160f;border:1px solid var(--border);border-radius:12px;overflow:hidden}
+
+/* 页脚 */
+.footer{border-top:1px solid var(--border);background:var(--surface);padding:12px 0;margin-top:28px}
+.footer .bar{display:grid;gap:16px;grid-template-columns:1fr}
+.footer p{color:var(--muted);font-size:14px;margin:0}
+
+/* 表格（新闻、名册等） */
+table{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--border);
+  border-radius:12px;overflow:hidden}
 th,td{padding:10px;border-bottom:1px solid var(--border);text-align:left}
-@media(max-width:960px){
+
+/* 按钮体系 */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  padding:10px 14px;border-radius:12px;font-weight:700;cursor:pointer;user-select:none;
+  transition:all .15s ease;border:1px solid #fff; /* 白色边框（需求） */}
+.btn-primary{background:var(--accent);color:#fff;border-color:#fff}
+.btn-primary:hover{background:var(--accent-2)}
+.btn-outline{background:transparent;color:var(--accent);border-color:#fff}
+.btn-outline:hover{background:#fff;color:var(--accent)}
+
+/* 表单（服务页） */
+form{display:grid;gap:10px}
+input[type="text"],input[type="email"],textarea,select{
+  background:#f7f9fe;border:1px solid var(--border);border-radius:12px;
+  padding:10px 12px;color:var(--txt);outline:none}
+textarea{min-height:110px;resize:vertical}
+input::placeholder,textarea::placeholder{color:#7b8aa8}
+
+/* 次要文字/说明采用金色（需求） */
+.muted,.subtle,.hint,.card .meta{color:var(--muted)}
+
+/* 可点击区域 & 卡片 hover 反馈 */
+.card.hoverable{transition:transform .15s ease, box-shadow .15s ease}
+.card.hoverable:hover{transform:translateY(-2px);box-shadow:0 12px 26px rgba(4,30,66,.10)}
+
+/* 细节：焦点可见性（可访问性） */
+:focus-visible{outline:2px solid var(--accent-2);outline-offset:2px}
+
+/* 响应式 */
+@media (max-width:1024px){
   .hero{grid-template-columns:1fr}
-  .grid,.quick,.kpis{grid-template-columns:1fr}
+  .grid,.quick,.kpis{grid-template-columns:repeat(2,1fr)}
 }
+@media (max-width:640px){
+  .grid,.quick,.kpis{grid-template-columns:1fr}
+  .nav .links{gap:6px}
+  .nav .links a{padding:6px 8px}
+}
+
+/* 页面局部：老页面兼容（原有类名保持） */
+ .banner b{color:var(--txt)}
+ .hero .muted{color:var(--muted)}
+}
+
