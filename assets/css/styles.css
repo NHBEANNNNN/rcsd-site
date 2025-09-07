@@ -2,7 +2,7 @@
 :root{
   --bg:#e9f1fb; --surface:#111111; --card:#111111;
   --muted:#C8A951; --txt:#ffffff; --accent:#041E42; --accent-2:#1F3B73;
-  --border:#D0D5DD; --warn:#C8A951; --danger:#ff6b6b;
+  --border:#ffffff; --warn:#C8A951; --danger:#ff6b6b;
 }
 *{box-sizing:border-box}
 html,body{margin:0;padding:0;background:var(--bg);color:var(--txt);font-family:Inter,system-ui,Segoe UI,Arial}
