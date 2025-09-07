@@ -1,6 +1,6 @@
 
 :root{
-  --bg:#F2F3F5; --surface:#ffffff; --card:#ffffff;
+  --bg:#000000; --surface:#111111; --card:#111111;
   --muted:#667085; --txt:#ffffff; --accent:#041E42; --accent-2:#1F3B73;
   --border:#D0D5DD; --warn:#C8A951; --danger:#ff6b6b;
 }
