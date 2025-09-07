@@ -1,8 +1,8 @@
 
 :root{
-  --bg:#0b0f0b; --surface:#121a12; --card:#0f160f;
-  --muted:#a7b8a9; --txt:#eaf6ea; --accent:#62c062; --accent-2:#2e8a2e;
-  --border:#233123; --warn:#ffd166; --danger:#ff6b6b;
+  --bg:#F2F3F5; --surface:#ffffff; --card:#ffffff;
+  --muted:#667085; --txt:#0B0F14; --accent:#041E42; --accent-2:#1F3B73;
+  --border:#D0D5DD; --warn:#C8A951; --danger:#ff6b6b;
 }
 *{box-sizing:border-box}
 html,body{margin:0;padding:0;background:var(--bg);color:var(--txt);font-family:Inter,system-ui,Segoe UI,Arial}
