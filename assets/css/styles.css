@@ -122,3 +122,35 @@ input::placeholder,textarea::placeholder{color:#7b8aa8}
  .hero .muted{color:var(--muted)}
 }
 
+/* === 覆盖旧的警员名册样式，统一为蓝白主题 === */
+.roster .card,
+.officer-card {
+  background: var(--surface) !important;       /* 白底 */
+  border: 1px solid var(--border) !important; /* 浅灰蓝边框 */
+  border-radius: 14px !important;
+  box-shadow: 0 6px 18px rgba(4,30,66,.06) !important;
+  color: var(--txt) !important;
+}
+
+/* 信息栏改为深蓝背景，文字白色，编号金色 */
+.roster .card .info,
+.officer-card .info {
+  background: var(--accent) !important;  /* 深蓝 */
+  color: #fff !important;
+  border-radius: 0 0 14px 14px !important;
+  padding: 12px !important;
+}
+.roster .card .info small,
+.officer-card .info small { color: #e9f1fb !important; }
+.roster .card .info .badge-id,
+.officer-card .info .badge-id { color: var(--warn) !important; }
+
+/* 警员照片统一大小比例 */
+.roster .card .photo img,
+.officer-card .photo img {
+  width: 100% !important;
+  height: 220px !important;
+  object-fit: cover !important;
+  display: block;
+}
+
