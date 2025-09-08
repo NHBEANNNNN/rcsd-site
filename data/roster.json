@@ -29,7 +29,7 @@
     "division": "Administration",
     "badge": "0091",
     "status": "Active",
-    "photo": "assets/img/bd.png",
+    "photo": "assets/img/placeholder_officer.svg",
     "bio": "人事管理（警员招募、晋升、纪律、福利）财务与预算（警队年度开支、装备采购）培训与教育（警校、进修课程、领导力发展）。"
   },
   { 
@@ -51,7 +51,7 @@
    "division": "Patrol",
    "badge": "0043",
    "status": "Active",
-   "photo": "assets/img/ad.png",
+   "photo": "assets/img/placeholder_officer.svg",
    "bio": "警员。"
   },
   {
@@ -62,7 +62,7 @@
    "division": "Special Weapon and Tactics",
    "badge": "0060",
    "status": "Active",
-   "photo": "assets/img/qn.png",
+   "photo": "assets/img/placeholder_officer.svg",
    "bio": "特警队，队员。"
   }
 ]
