@@ -1,31 +1,31 @@
 [
   {
     "id": "1",
-    "name": "扎克 道森",
-    "rank": "警长（Sheriff)",
-    "callsign": "RC-1",
+    "name": "杰瑞 米瓦德（J.Miwade）",
+    "rank": "警长（CP)",
+    "callsign": "PC-1",
     "division": "Administration",
     "badge": "0001",
-    "status": "Retire",
+    "status": "Active",
     "photo": "assets/img/ZHA KE.png",
-    "bio": "第一任治安官办公室警长。"
+    "bio": "负责制定和执行警队的发展战略、治安方针和重大决策,跨境案件、国际警务合作,负责警队高级人事任免，制定纪律规范,政府负责，接受政策指导。"
   },
   {
    "id": "2",
-   "name": "尼恩 比恩（N.Bean）",
-   "rank": "警长（Sheriff）",
-   "callsign": "RC-43",
+   "name": "华 比恩（行动）（H.Bean）",
+   "rank": "副局长（DCP）",
+   "callsign": "PC-66",
    "division": "Administration",
-   "badge": "0002",
+   "badge": "0066",
    "status": "Active",
-   "photo": "assets/img/nb.png",
-   "bio": "统筹警队的人事任命、晋升制度、纪律规范，决定副处长和助理处长的分工，监督各大部门的运作，确保警队的预算、资源分配合理。"
+   "photo": "assets/img/hb.png",
+   "bio": "专门负责一线执法与治安行动，确保街头巡逻、刑事侦查、特警、反恐、交通等前线运作顺畅。"
   },
   {
     "id": "3",
-    "name": "比格 考克",
-    "rank": "副警长（管理）（Vice Sheriff)",
-    "callsign": "RC-91",
+    "name": "陈 懿",
+    "rank": "副局长（管理）（DCP)",
+    "callsign": "PC-91",
     "division": "Administration",
     "badge": "0091",
     "status": "Active",
@@ -34,79 +34,46 @@
   },
   { 
    "id": "4",
-   "name": "迈尔斯 布莱克",
-   "rank": "副警长（行动）（Vice Sheriff）",
-   "callsign": "RC-42",
-   "division": "Administration",
-   "badge": "0042",
+   "name": "周 星星",
+   "rank": "助理局长（巡逻）（ACP）",
+   "callsign": "PC-81",
+   "division": "Patrol",
+   "badge": "0081",
    "status": "Active",
    "photo": "assets/img/mb.png",
-   "bio": "专门负责一线执法与治安行动，确保街头巡逻、刑事侦查、特警、反恐、交通等前线运作顺畅。"
+   "bio": "主管一线巡逻单位，确保街头巡逻运作顺畅。"
   },
   {
    "id": "5",
-   "name": "阿德里安 耶罗",
-   "rank": "上尉（Captain）",
-   "callsign": "RC-81",
-   "division": "Special Response Team",
-   "badge": "0081",
+   "name": "迈尔斯 布莱克",
+   "rank": "三级警员(PCIII）",
+   "callsign": "PC-43",
+   "division": "Patrol",
+   "badge": "0043",
    "status": "Active",
    "photo": "assets/img/ad.png",
-   "bio": "特别响应队，战术顾问。"
+   "bio": "警员。"
   },
   {
    "id": "6",
-   "name": "威廉 布朗",
-   "rank": "二阶治安官（Deputy II）",
-   "callsign": "RC-27",
-   "division": "Patrol",
-   "badge": "0027",
-   "status": "Suspended",
-   "photo": "assets/img/wb.png",
-   "bio": "普巡组，普巡一级教官。"
-  }, 
-  {
-   "id": "7",
-   "name": "杰瑞 马斯克",
-   "rank": "上尉（Captain）",
-   "callsign": "RC-59",
-   "division": "Patrol",
-   "badge": "0059",
-   "status": "Active",
-   "photo": "assets/img/jm.PNG",
-   "bio": "普巡组，普巡押运员。"
-  },  
-  {
-   "id": "8",
-   "name": "乔丹 妮盖",
-   "rank": "下士长（Corporal）",
+   "name": "乔丹 杰斯",
+   "rank": "二级警员（PCII）",
    "callsign": "RC-60",
-   "division": "Special Response Team",
+   "division": "Special Weapon and Tactics",
    "badge": "0060",
    "status": "Active",
    "photo": "assets/img/qn.png",
-   "bio": "特别响应队，队员。"
+   "bio": "特警队，队员。"
   }, 
   {
-   "id": "9",
-   "name": "史蒂夫 杰克尔",
-   "rank": "一阶治安官（Deputy I）",
-   "callsign": "RC-62",
-   "division": "Patrol",
-   "badge": "0062",
-   "status": "Active",
-   "photo": "assets/img/s1.png",
-   "bio": "一阶治安官。"
-  }, 
-  {
-   "id": "10",
-   "name": "史密斯 林肯",
-   "rank": "一阶治安官（Deputy I）",
-   "callsign": "RC-39",
-   "division": "Patrol",
-   "badge": "0039",
-   "status": "Active",
-   "photo": "assets/img/sl.png",
-   "bio": "一阶治安官。"
+    "id": "10",
+    "name": "扎克 道森",
+    "rank": "警长（Sheriff)",
+    "callsign": "RC-1",
+    "division": "Administration",
+    "badge": "0001",
+    "status": "Retire",
+    "photo": "assets/img/ZHA KE.png",
+    "bio": "洛克伍德治安官办公室的老战友警长。"
   }
 ]
