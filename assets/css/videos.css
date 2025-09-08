@@ -1,7 +1,7 @@
 body {
   font-family: Arial, sans-serif;
-  background-color: #0f1c0f;
-  color: #e6f6e6;
+  background-color: #e9f1fb;
+  color: #0B0F14; 
   margin: 0;
   padding: 0;
 }
@@ -15,15 +15,15 @@ body {
   margin-top: 20px;
 }
 .video-card {
-  background: #121a12;
-  border: 1px solid #233123;
+  background: #ffffff; 
+  border: 1px solid #d0d7e2;
   border-radius: 12px;
   padding: 12px;
   text-align: center;
 }
 .video-card h3 {
   margin: 10px 0;
-  color: #e6f6e6;
+  color: #041E42;
 }
 iframe {
   width: 100%;
