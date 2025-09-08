@@ -64,16 +64,5 @@
    "status": "Active",
    "photo": "assets/img/qn.png",
    "bio": "特警队，队员。"
-  }, 
-  {
-    "id": "10",
-    "name": "扎克 道森",
-    "rank": "警长（Sheriff)",
-    "callsign": "RC-1",
-    "division": "Administration",
-    "badge": "0001",
-    "status": "Retire",
-    "photo": "assets/img/ZHA KE.png",
-    "bio": "洛克伍德治安官办公室的老战友警长。"
   }
 ]
