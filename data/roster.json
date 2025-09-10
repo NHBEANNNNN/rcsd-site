@@ -43,8 +43,19 @@
    "photo": "assets/img/zx.png",
    "bio": "主管一线巡逻单位，确保街头巡逻运作顺畅。"
   },
-  {
+  { 
    "id": "5",
+   "name": "伯顿 简",
+   "rank": "助理局长（CID）（ACP）",
+   "callsign": "PC-81",
+   "division": "Patrol",
+   "badge": "0081",
+   "status": "Active",
+   "photo": "assets/img/jb.png",
+   "bio": "主管警探刑事案件，重大案件负责人。"
+  },
+  {
+   "id": "6",
    "name": "迈尔斯 布莱克",
    "rank": "三级警员(PCIII）",
    "callsign": "PC-43",
@@ -55,7 +66,7 @@
    "bio": "警员。"
   },
   {
-   "id": "6",
+   "id": "7",
    "name": "乔丹 杰斯",
    "rank": "二级警员（PCII）",
    "callsign": "RC-60",
