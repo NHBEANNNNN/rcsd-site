@@ -29,30 +29,30 @@
     "division": "Administration",
     "badge": "0091",
     "status": "Active",
-    "photo": "assets/img/placeholder_officer.svg",
+    "photo": "assets/img/cy.png",
     "bio": "人事管理（警员招募、晋升、纪律、福利）财务与预算（警队年度开支、装备采购）培训与教育（警校、进修课程、领导力发展）。"
   },
   { 
    "id": "4",
+   "name": "伯顿 简",
+   "rank": "反黑主管（ACP）",
+   "callsign": "PC-06",
+   "division": "CID",
+   "badge": "0006",
+   "status": "Active",
+   "photo": "assets/img/jb.png",
+   "bio": "主管警探刑事案件，重大案件负责人。"
+  },
+  { 
+   "id": "5",
    "name": "周 星星",
-   "rank": "助理局长（巡逻）（ACP）",
+   "rank": "高级上尉（SC）",
    "callsign": "PC-81",
    "division": "Patrol",
    "badge": "0081",
    "status": "Active",
    "photo": "assets/img/zx.png",
-   "bio": "主管一线巡逻单位，确保街头巡逻运作顺畅。"
-  },
-  { 
-   "id": "5",
-   "name": "伯顿 简",
-   "rank": "助理局长（CID）（ACP）",
-   "callsign": "PC-06",
-   "division": "Patrol",
-   "badge": "0006",
-   "status": "Active",
-   "photo": "assets/img/jb.png",
-   "bio": "主管警探刑事案件，重大案件负责人。"
+   "bio": "勇气勋章获得者，普巡作战专家。"
   },
   {
    "id": "6",
