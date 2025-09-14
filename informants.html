@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>线人板块 - LSPD</title>
+  <link rel="stylesheet" href="assets/css/styles.css">
+  <style>
+    body{ background:#e9f1fb; color:#0b0f14; margin:0; }
+    .list{ display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:16px; }
+    .officer-card{ background:#fff; border:1px solid #ccc; border-radius:14px; box-shadow:0 6px 18px rgba(4,30,66,.06); overflow:hidden; }
+    .officer-card .photo img{ width:100%; height:180px; object-fit:cover; display:block; }
+    .officer-card .info{ background:#041E42; color:#fff; padding:12px; }
+    .officer-card .info small{ color:#e9f1fb; }
+    .hidden{ display:none !important; }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <div class="brand">
+      <img src="assets/img/LSPD LOGO.png" alt="LSPD logo" style="width:40px;height:40px;object-fit:contain">
+      <span class="title">洛圣都城市警察局</span>
+    </div>
+    <div class="links">
+      <a href="index.html">首页</a>
+      <a href="informants.html" class="active gated hidden" data-role="intel">线人板块</a>
+    </div>
+  </nav>
+
+  <main class="container">
+    <h1>线人板块</h1>
+    <p class="muted">仅授权警官可见（角色：intel）。</p>
+
+    <div id="authBar" style="margin:12px 0">
+      <span id="authState">未登录</span>
+      <button id="loginBtn">登录</button>
+      <button id="logoutBtn" style="display:none">退出</button>
+    </div>
+
+    <section id="intelArea" class="hidden">
+      <div class="list" id="intelList"></div>
+    </section>
+  </main>
+
+  <script type="module">
+    import { requireRole } from './assets/js/auth.js';
+    await requireRole('intel');
+
+    const items = [
+      { name: "CI-017", last: "2025-09-10", note: "夜间街区帮派动态确认。" , photo:"assets/img/bb1.png" },
+      { name: "CI-024", last: "2025-09-08", note: "可疑车辆牌照与路线已记录。", photo:"assets/img/bb2.png" },
+      { name: "CI-031", last: "2025-09-06", note: "仓库出入频率异常，疑似投递点。", photo:"assets/img/bb3.png" }
+    ];
+
+    const list = document.getElementById('intelList');
+    document.getElementById('intelArea').classList.remove('hidden');
+    list.innerHTML = items.map(i => `
+      <article class="officer-card">
+        <div class="photo"><img src="${i.photo}" alt="${i.name}"></div>
+        <div class="info">
+          <h3>${i.name}</h3>
+          <p><small>最近跟进：</small>${i.last}</p>
+          <p><small>备注：</small>${i.note}</p>
+        </div>
+      </article>
+    `).join('');
+  </script>
+  <script type="module" src="assets/js/auth.js"></script>
+</body>
+</html>
