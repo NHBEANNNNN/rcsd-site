@@ -111,22 +111,3 @@ export async function readUserDoc(user) {
     if (el) el.textContent = (user && user.email) ? user.email : "";
   }
 }
-
-export async function doLogin(email, password) {
-  await signInWithEmailAndPassword(auth, email, password);
-}
-
-export async function doLogout() {
-  await signOut(auth);
-  location.href = "login.html";
-}
-<script type="module">
-  import { auth } from "./assets/js/auth.js";
-  import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
-
-  onAuthStateChanged(auth, (user) => {
-    const link = document.getElementById("informantsLink");
-    if (link) link.style.display = user ? "inline" : "none";
-  });
-</script>
-
