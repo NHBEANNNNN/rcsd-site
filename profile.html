@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>个人信息 - LSPD</title>
+  <link rel="icon" href="assets/img/LSPD_LOGO.png" />
+  <style>
+    :root{--brand:#0f1c6f;--muted:#64748b}
+    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial; margin:0; background:#f5f7fb; color:#0f172a}
+    .nav{display:flex;align-items:center;gap:16px;padding:12px 16px;background:#fff;border-bottom:1px solid #e5e7eb;position:sticky;top:0}
+    .nav .brand{display:flex;align-items:center;gap:10px}
+    .nav img{width:36px;height:36px;object-fit:contain}
+    .links{margin-left:auto;display:flex;gap:12px}
+    .links a{color:#334155;text-decoration:none;padding:6px 8px;border-radius:8px}
+    .links a:hover{background:#f1f5f9}
+    .container{max-width:920px;margin:28px auto;padding:0 16px}
+    .card{background:#fff;border:1px solid #e5e7eb;border-radius:14px;box-shadow:0 4px 12px rgba(15,23,42,.04)}
+    .card .hd{padding:18px 20px;border-bottom:1px solid #e5e7eb;display:flex;justify-content:space-between;align-items:center}
+    .card .bd{padding:20px}
+    .muted{color:var(--muted)}
+    .grid{display:grid;grid-template-columns:1fr 2fr;gap:10px 18px}
+    .label{color:#475569}
+    .value{font-weight:600}
+    .row{display:flex;gap:10px;padding:0 20px 20px}
+    .btn{display:inline-block;padding:9px 14px;border-radius:10px;border:1px solid #e2e8f0;background:#fff;cursor:pointer;text-decoration:none;color:#0f172a}
+    .btnPrimary{background:var(--brand);color:#e6eefb;border-color:transparent}
+    .badge{display:inline-block;font-size:12px;border-radius:999px;padding:4px 8px;background:#eef2ff}
+    .hint{font-size:14px}
+    #adminLink{display:none}
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <div class="brand">
+      <img src="assets/img/LSPD_LOGO.png" alt="logo" />
+      <span class="muted">洛圣都市警察局 · 个人资料</span>
+    </div>
+    <div class="links">
+      <a href="index.html">首页</a>
+      <a href="roster.html">警员名册</a>
+      <a id="adminLink" href="admin.html">管理员后台</a>
+      <a href="javascript:void(0)" id="logoutBtn" class="btn">退出登录</a>
+    </div>
+  </nav>
+
+  <main class="container">
+    <div class="card">
+      <div class="hd">
+        <div>
+          <span class="badge">个人档案</span>
+        </div>
+      </div>
+      <div class="bd">
+        <p class="hint muted" style="margin-bottom:14px">以下数据来自值班系统（Firestore）。如需修改请联系管理员。</p>
+        <div class="grid">
+          <div class="label">姓名</div>         <div class="value" id="name"></div>
+          <div class="label">警号</div>         <div class="value" id="id"></div>
+          <div class="label">呼号</div>         <div class="value" id="callsign"></div>
+          <div class="label">职级/部门</div>   <div class="value" id="rank"></div>
+          <div class="label">状态</div>         <div class="value" id="status"></div>
+          <div class="label">联系电话</div>     <div class="value" id="phone"></div>
+          <div class="label">电子邮箱</div>     <div class="value" id="email"></div>
+        </div>
+      </div>
+      <div class="row">
+        <a class="btnPrimary btn" href="index.html">返回首页</a>
+      </div>
+    </div>
+  </main>
+
+  <script type="module">
+    import { requireLogin, readUserDoc, doLogout } from "./assets/js/auth.js";
+
+    requireLogin((user) => {
+      readUserDoc(user);
+      const btn = document.getElementById('logoutBtn');
+      if (btn) btn.onclick = () => doLogout();
+    });
+  </script>
+</body>
+</html>
