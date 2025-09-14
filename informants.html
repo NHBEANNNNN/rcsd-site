@@ -5,66 +5,69 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>线人板块 - LSPD</title>
   <link rel="stylesheet" href="assets/css/styles.css">
-  <style>
-    body{ background:#e9f1fb; color:#0b0f14; margin:0; }
-    .list{ display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:16px; }
-    .officer-card{ background:#fff; border:1px solid #ccc; border-radius:14px; box-shadow:0 6px 18px rgba(4,30,66,.06); overflow:hidden; }
-    .officer-card .photo img{ width:100%; height:180px; object-fit:cover; display:block; }
-    .officer-card .info{ background:#041E42; color:#fff; padding:12px; }
-    .officer-card .info small{ color:#e9f1fb; }
-    .hidden{ display:none !important; }
-  </style>
 </head>
 <body>
-  <nav class="nav">
+
+  <!-- 导航栏 -->
+  <nav class="nav" aria-label="主导航">
     <div class="brand">
       <img src="assets/img/LSPD LOGO.png" alt="LSPD logo" style="width:40px;height:40px;object-fit:contain">
       <span class="title">洛圣都城市警察局</span>
     </div>
     <div class="links">
       <a href="index.html">首页</a>
-      <a href="informants.html" class="active gated hidden" data-role="intel">线人板块</a>
+      <a href="videos.html">视频专区</a>
+      <a href="news.html">新闻通告</a>
+      <a href="services.html">便民服务</a>
+      <a href="divisions.html">部门</a>
+      <a href="jail.html">拘留所</a>
+      <a href="careers.html">招募</a>
+      <a href="contact.html">联系</a>
+      <a href="roster.html">警员名册</a>
+      <a href="informants.html" id="informantsLink" style="display:none;">线人板块</a>
     </div>
   </nav>
 
+  <!-- 主内容 -->
   <main class="container">
     <h1>线人板块</h1>
-    <p class="muted">仅授权警官可见（角色：intel）。</p>
+    <p>本页面仅限授权警员访问，包含机密的线人信息。</p>
 
-    <div id="authBar" style="margin:12px 0">
-      <span id="authState">未登录</span>
-      <button id="loginBtn">登录</button>
-      <button id="logoutBtn" style="display:none">退出</button>
-    </div>
+    <!-- 登录信息 -->
+    <div id="authState" style="margin:10px 0;color:#333;">状态检测中...</div>
 
-    <section id="intelArea" class="hidden">
-      <div class="list" id="intelList"></div>
+    <!-- 线人信息区域 -->
+    <section id="intelSection" style="margin-top:20px;">
+      <h2>线人名单</h2>
+      <div class="intel-list">
+        <div class="card">
+          <h3>线人 A</h3>
+          <p>身份：毒品线索提供者</p>
+          <p>风险等级：高</p>
+        </div>
+        <div class="card">
+          <h3>线人 B</h3>
+          <p>身份：帮派情报来源</p>
+          <p>风险等级：中</p>
+        </div>
+        <!-- ⚠️ 这里可以以后改成 Firestore 动态读取 -->
+      </div>
     </section>
   </main>
 
-  <script type="module">
-    import { requireRole } from './assets/js/auth.js';
-    await requireRole('intel');
+  <!-- 登录/退出按钮 -->
+  <footer style="margin-top:40px;text-align:center;">
+    <button id="loginBtn" onclick="login()">登录</button>
+    <button id="logoutBtn" onclick="logout()" style="display:none;">退出</button>
+  </footer>
 
-    const items = [
-      { name: "CI-017", last: "2025-09-10", note: "夜间街区帮派动态确认。" , photo:"assets/img/bb1.png" },
-      { name: "CI-024", last: "2025-09-08", note: "可疑车辆牌照与路线已记录。", photo:"assets/img/bb2.png" },
-      { name: "CI-031", last: "2025-09-06", note: "仓库出入频率异常，疑似投递点。", photo:"assets/img/bb3.png" }
-    ];
-
-    const list = document.getElementById('intelList');
-    document.getElementById('intelArea').classList.remove('hidden');
-    list.innerHTML = items.map(i => `
-      <article class="officer-card">
-        <div class="photo"><img src="${i.photo}" alt="${i.name}"></div>
-        <div class="info">
-          <h3>${i.name}</h3>
-          <p><small>最近跟进：</small>${i.last}</p>
-          <p><small>备注：</small>${i.note}</p>
-        </div>
-      </article>
-    `).join('');
-  </script>
+  <!-- 脚本：引入授权逻辑 -->
   <script type="module" src="assets/js/auth.js"></script>
+  <script type="module">
+    // 页面加载时强制校验
+    await window.requireIntel();
+  </script>
+
 </body>
 </html>
+
