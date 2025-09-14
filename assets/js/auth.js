@@ -1,54 +1,8 @@
-// 使用 CDN 方式导入 Firebase
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+// ==========================
+// auth.js  —  登录 + 角色授权
+// ==========================
 
-// Firebase 配置
-const firebaseConfig = {
-  apiKey: "AIzaSyHFAhPnDfDK6xaGdnx6tel-vUYfpPpBeM",
-  authDomain: "lspd-undercover.firebaseapp.com",
-  projectId: "lspd-undercover",
-  storageBucket: "lspd-undercover.appspot.com",
-  messagingSenderId: "773732274642",
-  appId: "1:773732274642:web:2ec2470be0f81723db8b",
-  measurementId: "G-6VD389C96K"
-};
-
-// 初始化 Firebase
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-
-// 登录函数
-async function login() {
-  const provider = new GoogleAuthProvider();
-  try {
-    await signInWithPopup(auth, provider);
-    alert("✅ 登录成功");
-  } catch (error) {
-    console.error(error);
-    alert("❌ 登录失败");
-  }
-}
-
-// 登出函数
-async function logout() {
-  try {
-    await signOut(auth);
-    alert("已退出登录");
-  } catch (error) {
-    console.error(error);
-  }
-}
-
-// 监听登录状态
-onAuthStateChanged(auth, user => {
-  if (user) {
-    console.log("已登录：", user.email);
-    // TODO: 这里控制只有警官能看到的板块
-  } else {
-    console.log("未登录");
-  }
-});
-// 使用 CDN 方式导入 Firebase
+// Firebase SDK - 使用 CDN 方式导入（适合 GitHub Pages）
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {
   getAuth, onAuthStateChanged, GoogleAuthProvider,
@@ -57,59 +11,95 @@ import {
 import {
   getFirestore, doc, getDoc
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js";
 
-// === 你的 Firebase 配置（已从控制台复制） ===
+// 🔹 使用你提供的真实配置
 const firebaseConfig = {
-  apiKey: "你的apiKey",
-  authDomain: "你的项目ID.firebaseapp.com",
-  projectId: "你的项目ID",
-  storageBucket: "你的项目ID.appspot.com",
-  messagingSenderId: "xxxx",
-  appId: "xxxx",
-  measurementId: "G-xxxxx"
+  apiKey: "AIzaSyAFHaPnQFnDX6akaGdnxKteU-vlYfPpBeM",
+  authDomain: "lspd-undercover.firebaseapp.com",
+  projectId: "lspd-undercover",
+  storageBucket: "lspd-undercover.firebasestorage.app",
+  messagingSenderId: "773732274642",
+  appId: "1:773732274642:web:2ec470bee070f1023db80b",
+  measurementId: "G-6DY309969K"
 };
 
 // 初始化
 const app  = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db   = getFirestore(app);
+const analytics = getAnalytics(app); // 🔹 你配置里有 analytics，直接加上
+const provider = new GoogleAuthProvider();
 
-// 登录 / 登出
-window.login  = async () => {
-  try { await signInWithPopup(auth, new GoogleAuthProvider()); }
-  catch (e) { console.error(e); alert("登录失败"); }
+// 登录/登出
+window.login = async () => {
+  try {
+    await signInWithPopup(auth, provider);
+  } catch (e) {
+    console.error("[Auth] 登录失败:", e);
+    alert("❌ 登录失败，请重试");
+  }
 };
-window.logout = async () => { try { await signOut(auth); } catch(e){ console.error(e); } };
 
-// —— 读取角色（用邮箱当文档ID）——
-async function getRolesByEmail(email){
-  if(!email) return {};
-  const snap = await getDoc(doc(db, "roles", email.toLowerCase()));
-  return snap.exists() ? (snap.data() || {}) : {};
+window.logout = async () => {
+  try {
+    await signOut(auth);
+  } catch (e) {
+    console.error("[Auth] 登出失败:", e);
+  }
+};
+
+// 从 Firestore 获取角色
+async function getRolesByEmail(email) {
+  if (!email) return {};
+  try {
+    const ref  = doc(db, "roles", String(email).toLowerCase());
+    const snap = await getDoc(ref);
+    return snap.exists() ? (snap.data() || {}) : {};
+  } catch (e) {
+    console.error("[Auth] 获取角色失败:", e);
+    return {};
+  }
 }
 
-// —— 仅授权显示“线人板块”入口 ——
-// 在每个页面导航里放：<a href="informants.html" id="informantsLink" style="display:none;">线人板块</a>
+// 状态监听
 onAuthStateChanged(auth, async (user) => {
-  const link = document.getElementById("informantsLink");
-  if (!link) return;
+  const link      = document.getElementById("informantsLink");
+  const loginBtn  = document.getElementById("loginBtn");
+  const logoutBtn = document.getElementById("logoutBtn");
+  const authState = document.getElementById("authState");
 
-  if (!user) { link.style.display = "none"; return; }
+  if (!user) {
+    if (link)      link.style.display = "none";
+    if (loginBtn)  loginBtn.style.display  = "inline-flex";
+    if (logoutBtn) logoutBtn.style.display = "none";
+    if (authState) authState.textContent   = "未登录";
+    return;
+  }
+
+  if (authState) authState.textContent = `已登录：${user.displayName || user.email}`;
+  if (loginBtn)  loginBtn.style.display  = "none";
+  if (logoutBtn) logoutBtn.style.display = "inline-flex";
 
   const roles = await getRolesByEmail(user.email || "");
-  // 只有 intel: true 才显示
-  link.style.display = roles.intel === true ? "inline-block" : "none";
+  const allowed = roles.intel === true;
+
+  if (link) link.style.display = allowed ? "inline-block" : "none";
 });
 
-// —— 受限页面的“强校验” ——
-// 在 informants.html 里调用：await window.requireIntel();
+// 受限页面专用函数
 window.requireIntel = () => new Promise((resolve) => {
   onAuthStateChanged(auth, async (user) => {
-    if (!user) { location.replace("index.html"); return; }
+    if (!user) {
+      location.replace("index.html");
+      return;
+    }
     const roles = await getRolesByEmail(user.email || "");
-    if (roles.intel === true) resolve(user);
-    else location.replace("index.html");
+    if (roles.intel === true) {
+      resolve(user);
+    } else {
+      location.replace("index.html");
+    }
   });
 });
-
 
