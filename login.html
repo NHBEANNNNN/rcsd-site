@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>登录 - LSPD</title>
+  <link rel="icon" href="assets/img/LSPD_LOGO.png" />
+  <style>
+    :root{--brand:#0f1c6f;--muted:#64748b}
+    *{box-sizing:border-box}
+    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;margin:0;background:#f5f7fb;color:#0f172a;display:flex;min-height:100vh;align-items:center;justify-content:center}
+    .card{width:100%;max-width:420px;background:#fff;border:1px solid #e5e7eb;border-radius:16px;box-shadow:0 10px 24px rgba(15,23,42,.06)}
+    .hd{padding:22px 22px 10px;border-bottom:1px solid #eef2f7}
+    .hd h1{margin:0;font-size:18px;color:#0f1c6f}
+    .bd{padding:20px 22px 24px}
+    label{display:block;font-size:14px;color:#475569;margin:12px 0 6px}
+    input{width:100%;padding:11px 12px;border:1px solid #e5e7eb;border-radius:10px;outline:none}
+    input:focus{border-color:#94a3b8;box-shadow:0 0 0 3px rgba(148,163,184,.25)}
+    .btn{width:100%;margin-top:16px;padding:11px 14px;border:none;border-radius:10px;background:var(--brand);color:#fff;cursor:pointer;font-weight:600}
+    .muted{color:var(--muted);font-size:13px}
+    .row{display:flex;justify-content:space-between;align-items:center;margin-top:10px}
+    #loginBox{display:none}
+    #error{color:#b91c1c;font-size:13px;margin-top:8px;display:none}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="hd">
+      <h1>洛圣都市警察局 · 账号登录</h1>
+      <p class="muted" style="margin:6px 0 0">使用你在系统登记的邮箱与密码。</p>
+    </div>
+    <div class="bd">
+      <form id="loginBox">
+        <label for="email">邮箱</label>
+        <input id="email" type="email" placeholder="name@example.com" autocomplete="username" required />
+        <label for="password">密码</label>
+        <input id="password" type="password" placeholder="••••••••" autocomplete="current-password" required />
+        <button class="btn" id="loginBtn" type="submit">登录</button>
+        <div id="error"></div>
+        <div class="row">
+          <span class="muted">登录有问题？联系管理员开通账户。</span>
+          <a class="muted" href="index.html" style="text-decoration:none">返回首页</a>
+        </div>
+      </form>
+      <div id="loading" class="muted">正在检查登录状态…</div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { guardLogin, doLogin } from "./assets/js/auth.js";
+
+    const loginBox = document.getElementById("loginBox");
+    const loading = document.getElementById("loading");
+    const errorBox = document.getElementById("error");
+
+    function showForm() {
+      loading.style.display = "none";
+      loginBox.style.display = "block";
+    }
+
+    guardLogin(showForm);
+
+    loginBox.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      errorBox.style.display = "none";
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
+      if (!email || !password) return;
+
+      // 简单的加载提示
+      const btn = document.getElementById("loginBtn");
+      const oldText = btn.textContent;
+      btn.disabled = true;
+      btn.textContent = "登录中…";
+
+      try {
+        await doLogin(email, password);
+        // 成功后，onAuthStateChanged 会把你送去 profile.html
+      } catch (err) {
+        errorBox.textContent = (err && err.message) ? err.message : "登录失败，请检查邮箱和密码。";
+        errorBox.style.display = "block";
+      } finally {
+        btn.disabled = false;
+        btn.textContent = oldText;
+      }
+    });
+  </script>
+</body>
+</html>
