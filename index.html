@@ -88,13 +88,38 @@
    本站为LSPD执法机构。紧急情况请拨打 LSPD报警电话。
   </footer>
   
-  <div class="card" style="max-width:360px;margin:12px 0;padding:12px;">
-  <h3>邮箱登录</h3>
-  <input id="email" type="email" placeholder="邮箱" style="width:100%;padding:8px;margin:6px 0;">
-  <input id="pwd" type="password" placeholder="密码" style="width:100%;padding:8px;margin:6px 0;">
-  <div style="display:flex;gap:8px;">
-    <button onclick="register(email.value, pwd.value)">注册</button>
-    <button onclick="loginEmail(email.value, pwd.value)">登录</button>
+<!-- 登录卡片 -->
+<div style="
+  max-width:400px;
+  margin:40px auto;
+  padding:24px;
+  background:#ffffff;
+  border-radius:12px;
+  box-shadow:0 4px 12px rgba(0,0,0,0.15);
+  text-align:center;
+">
+  <h2 style="margin-bottom:20px;color:#041E42;">警员登录</h2>
+
+  <input id="email" type="email" placeholder="请输入邮箱" 
+    style="width:100%;padding:12px;margin:10px 0;border:1px solid #ccc;
+           border-radius:6px;font-size:14px;" />
+
+  <input id="pwd" type="password" placeholder="请输入密码" 
+    style="width:100%;padding:12px;margin:10px 0;border:1px solid #ccc;
+           border-radius:6px;font-size:14px;" />
+
+  <div style="display:flex;gap:12px;justify-content:center;margin-top:20px;">
+    <button onclick="register(email.value, pwd.value)" 
+      style="flex:1;padding:12px;background:#041E42;color:#fff;border:none;
+             border-radius:6px;cursor:pointer;font-size:14px;">
+      注册
+    </button>
+
+    <button onclick="loginEmail(email.value, pwd.value)" 
+      style="flex:1;padding:12px;background:#1E90FF;color:#fff;border:none;
+             border-radius:6px;cursor:pointer;font-size:14px;">
+      登录
+    </button>
   </div>
 </div>
   
