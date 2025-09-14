@@ -29,8 +29,6 @@
         <a href="contact.html" class="">联系</a>
         <a href="roster.html" class="">警员名册</a>
         <a href="informants.html" id="informantsLink" style="display:none;">线人信息</a>
-        <a href="javascript:void(0)" id="loginBtn" onclick="login()">登录</a>
-        <a href="javascript:void(0)" id="logoutBtn" onclick="logout()" style="display:none;">退出</a>
       </div>
     </div>
   </nav>
@@ -87,42 +85,7 @@
   <footer class="footer">
    本站为LSPD执法机构。紧急情况请拨打 LSPD报警电话。
   </footer>
-  
-<!-- 登录卡片 -->
-<div style="
-  max-width:400px;
-  margin:40px auto;
-  padding:24px;
-  background:#ffffff;
-  border-radius:12px;
-  box-shadow:0 4px 12px rgba(0,0,0,0.15);
-  text-align:center;
-">
-  <h2 style="margin-bottom:20px;color:#041E42;">警员登录</h2>
-
-  <input id="email" type="email" placeholder="请输入邮箱" 
-    style="width:100%;padding:12px;margin:10px 0;border:1px solid #ccc;
-           border-radius:6px;font-size:14px;" />
-
-  <input id="pwd" type="password" placeholder="请输入密码" 
-    style="width:100%;padding:12px;margin:10px 0;border:1px solid #ccc;
-           border-radius:6px;font-size:14px;" />
-
-  <div style="display:flex;gap:12px;justify-content:center;margin-top:20px;">
-    <button onclick="register(email.value, pwd.value)" 
-      style="flex:1;padding:12px;background:#041E42;color:#fff;border:none;
-             border-radius:6px;cursor:pointer;font-size:14px;">
-      注册
-    </button>
-
-    <button onclick="loginEmail(email.value, pwd.value)" 
-      style="flex:1;padding:12px;background:#1E90FF;color:#fff;border:none;
-             border-radius:6px;cursor:pointer;font-size:14px;">
-      登录
-    </button>
-  </div>
-</div>
-  
+    
 <script type="module" src="assets/js/auth.js"></script>
 </body>
 </html>
