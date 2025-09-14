@@ -48,4 +48,68 @@ onAuthStateChanged(auth, user => {
     console.log("未登录");
   }
 });
+// 使用 CDN 方式导入 Firebase
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {
+  getAuth, onAuthStateChanged, GoogleAuthProvider,
+  signInWithPopup, signOut
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import {
+  getFirestore, doc, getDoc
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+// === 你的 Firebase 配置（已从控制台复制） ===
+const firebaseConfig = {
+  apiKey: "你的apiKey",
+  authDomain: "你的项目ID.firebaseapp.com",
+  projectId: "你的项目ID",
+  storageBucket: "你的项目ID.appspot.com",
+  messagingSenderId: "xxxx",
+  appId: "xxxx",
+  measurementId: "G-xxxxx"
+};
+
+// 初始化
+const app  = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db   = getFirestore(app);
+
+// 登录 / 登出
+window.login  = async () => {
+  try { await signInWithPopup(auth, new GoogleAuthProvider()); }
+  catch (e) { console.error(e); alert("登录失败"); }
+};
+window.logout = async () => { try { await signOut(auth); } catch(e){ console.error(e); } };
+
+// —— 读取角色（用邮箱当文档ID）——
+async function getRolesByEmail(email){
+  if(!email) return {};
+  const snap = await getDoc(doc(db, "roles", email.toLowerCase()));
+  return snap.exists() ? (snap.data() || {}) : {};
+}
+
+// —— 仅授权显示“线人板块”入口 ——
+// 在每个页面导航里放：<a href="informants.html" id="informantsLink" style="display:none;">线人板块</a>
+onAuthStateChanged(auth, async (user) => {
+  const link = document.getElementById("informantsLink");
+  if (!link) return;
+
+  if (!user) { link.style.display = "none"; return; }
+
+  const roles = await getRolesByEmail(user.email || "");
+  // 只有 intel: true 才显示
+  link.style.display = roles.intel === true ? "inline-block" : "none";
+});
+
+// —— 受限页面的“强校验” ——
+// 在 informants.html 里调用：await window.requireIntel();
+window.requireIntel = () => new Promise((resolve) => {
+  onAuthStateChanged(auth, async (user) => {
+    if (!user) { location.replace("index.html"); return; }
+    const roles = await getRolesByEmail(user.email || "");
+    if (roles.intel === true) resolve(user);
+    else location.replace("index.html");
+  });
+});
+
 
