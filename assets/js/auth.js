@@ -1,158 +1,124 @@
-/** ============================
- *  LSPD 网站登录 & 授权（完整版）
- *  - 支持 Google 登录 / 邮箱注册登录
- *  - 简单授权（邮箱白名单 & Firestore 角色）
- *  - 自动切换“线人情报”入口显示、登录/退出按钮
- * ============================ */
-
-// ---- CDN 方式导入 Firebase SDK ----
+// ===== Firebase v10 CDN =====
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import {
-  getAuth,
-  onAuthStateChanged,
-  GoogleAuthProvider,
-  signInWithPopup,
-  signOut,
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import {
-  getFirestore,
-  doc,
-  getDoc,
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-// ---- 你的 Firebase 配置（已替换为你的项目） ----
+// === 你的 Firebase 配置（已替换为你给我的）===
 const firebaseConfig = {
   apiKey: "AIzaSyAFHaPnQFnDX6akaGdnxKteU-vlYfPpBeM",
   authDomain: "lspd-undercover.firebaseapp.com",
   projectId: "lspd-undercover",
   storageBucket: "lspd-undercover.firebasestorage.app",
   messagingSenderId: "773732274642",
-  appId: "1:773732274642:web:2ec470bee070f1023db80b",
-  measurementId: "G-6DY309969K",
+  appId: "1:773732274642:web:2ec2470be0f8123db80b",
+  measurementId: "G-6DY309969K"
 };
 
-// ---- 初始化 ----
-const app = initializeApp(firebaseConfig);
+// 初始化
+const app  = initializeApp(firebaseConfig);
 const auth = getAuth(app);
-const db = getFirestore(app);
-const provider = new GoogleAuthProvider();
 
-// =====================================
-//  授权策略（两种任选一种或同时使用）
-// =====================================
+// ============== 页面工具 ==============
+const $ = (sel) => document.querySelector(sel);
+const show = (el) => el && (el.classList.remove('hidden'), el.style.removeProperty('display'));
+const hide = (el) => el && (el.classList.add('hidden'), el.style.display = 'none');
 
-// 方式 A：邮箱白名单（直接写入允许访问的人）
-const ALLOWED_EMAILS = [
-  // "yourname@example.com",
-];
+// 切换通用的 data-auth 显示
+function toggleAuthVisibility(user){
+  document.querySelectorAll('[data-auth="guest"]').forEach(el => user ? hide(el) : show(el));
+  document.querySelectorAll('[data-auth="user"]').forEach(el => user ? show(el) : hide(el));
 
-// 方式 B：Firestore 角色白名单（更灵活）
-// 在 Firestore 建集合 "roles"，文档ID 用**邮箱小写**，结构：{ roles: ["officer","admin"] }
-const ALLOWED_ROLES = ["officer", "admin", "detective"];
+  const who = $('#whoami');
+  if (who) {
+    if (user?.email) {
+      who.textContent = `👮 ${user.email}`;
+      show(who);
+    } else hide(who);
+  }
+}
 
-// 读取 Firestore 里的角色
-async function getRolesByEmail(email) {
+// 受限页面：给需要登录的页面加上这一行即可：
+// <script>window.REQUIRE_AUTH = true;</script>
+function guardIfRequired(user){
+  if (window.REQUIRE_AUTH && !user) {
+    // 记住来源页，登录后可以跳回来
+    sessionStorage.setItem('afterLogin', location.href);
+    location.href = 'login.html';
+  }
+}
+
+// 登录页的 UI 切换
+function toggleLoginPage(user){
+  const loginCard   = $('#loginCard');
+  const welcomeCard = $('#welcomeCard');
+  const loginNav = $('#loginNav'), logoutNav = $('#logoutNav');
+
+  if (user){
+    hide(loginCard);  show(welcomeCard);
+    if (logoutNav) show(logoutNav);
+    if (loginNav)  hide(loginNav);
+    const who = $('#whoami');
+    if (who) { who.textContent = `👮 ${user.email}`; show(who); }
+
+    // 若从受限页跳来，登录后直接回去
+    const back = sessionStorage.getItem('afterLogin');
+    if (back) { sessionStorage.removeItem('afterLogin'); location.href = back; }
+  } else {
+    show(loginCard); hide(welcomeCard);
+    if (logoutNav) hide(logoutNav);
+    if (loginNav)  show(loginNav);
+  }
+}
+
+// ============== 对外暴露的操作 ==============
+window.loginEmail = async (email, pwd) => {
   try {
-    const ref = doc(db, "roles", String(email).toLowerCase());
-    const snap = await getDoc(ref);
-    if (snap.exists()) {
-      const data = snap.data();
-      return Array.isArray(data.roles) ? data.roles : [];
-    }
+    await signInWithEmailAndPassword(auth, email, pwd);
+    alert('✅ 登录成功');
+    // 在 login.html 里，onAuthStateChanged 会自动切换 UI 或跳回上一页
+    // 在其他页面，保持当前页
   } catch (e) {
-    console.warn("[roles] 读取失败：", e);
-  }
-  return [];
-}
-
-// 统一判断是否有权限
-async function userHasAccess(user) {
-  if (!user) return false;
-
-  // A. 邮箱白名单
-  if (ALLOWED_EMAILS.length && ALLOWED_EMAILS.includes(user.email?.toLowerCase())) {
-    return true;
-  }
-
-  // B. 角色白名单
-  if (ALLOWED_ROLES.length) {
-    const roles = await getRolesByEmail(user.email || "");
-    if (roles.some(r => ALLOWED_ROLES.includes(String(r).toLowerCase()))) {
-      return true;
-    }
-  }
-
-  // 默认：没命中授权规则即无权限
-  return false;
-}
-
-// 根据登录/权限切换页面元素显示
-async function updateUI(user) {
-  const loginBtn = document.getElementById("loginBtn");
-  const logoutBtn = document.getElementById("logoutBtn");
-  const informantsLink = document.getElementById("informantsLink");
-
-  const has = await userHasAccess(user);
-
-  if (loginBtn)  loginBtn.style.display  = user ? "none" : "";
-  if (logoutBtn) logoutBtn.style.display = user ? "" : "none";
-  if (informantsLink) informantsLink.style.display = user && has ? "" : "none";
-}
-
-// 监听登录状态变化，自动更新 UI
-onAuthStateChanged(auth, (user) => {
-  updateUI(user);
-});
-
-// =====================================
-//  登录 / 登出 / 邮箱注册
-// =====================================
-
-// Google 登录
-window.login = async () => {
-  try {
-    await signInWithPopup(auth, provider);
-    alert("✅ 登录成功");
-  } catch (e) {
-    console.error("[Auth] 登录失败: ", e);
-    alert("❌ 登录失败，请重试");
+    console.error('登录失败:', e);
+    alert('❌ 登录失败：' + (e?.message || '请检查账号/密码'));
   }
 };
 
-// 退出
+window.register = async (email, pwd) => {
+  try {
+    await createUserWithEmailAndPassword(auth, email, pwd);
+    alert('✅ 注册并登录成功');
+  } catch (e) {
+    console.error('注册失败:', e);
+    alert('❌ 注册失败：' + (e?.message || '请检查邮箱格式与密码强度'));
+  }
+};
+
 window.logout = async () => {
   try {
     await signOut(auth);
-    alert("✅ 已退出登录");
+    alert('已退出');
+    // 如果在 login.html，就保持当前；其他页面可选择刷新
   } catch (e) {
-    console.error("[Auth] 登出失败: ", e);
-    alert("❌ 登出失败，请重试");
+    console.error('退出失败:', e);
+    alert('❌ 退出失败：' + (e?.message || '请稍后再试'));
   }
 };
 
-// 邮箱注册
-window.register = async (email, password) => {
-  if (!email || !password) return alert("请输入邮箱和密码");
-  try {
-    await createUserWithEmailAndPassword(auth, email, password);
-    alert("✅ 注册成功");
-  } catch (e) {
-    console.error("注册失败: ", e);
-    alert("❌ 注册失败: " + (e?.message || "未知错误"));
-  }
-};
+// ============== 登录状态全站监听 ==============
+onAuthStateChanged(auth, (user) => {
+  toggleAuthVisibility(user);
+  guardIfRequired(user);
 
-// 邮箱登录
-window.loginEmail = async (email, password) => {
-  if (!email || !password) return alert("请输入邮箱和密码");
-  try {
-    await signInWithEmailAndPassword(auth, email, password);
-    alert("✅ 登录成功");
-  } catch (e) {
-    console.error("登录失败: ", e);
-    alert("❌ 登录失败: " + (e?.message || "未知错误"));
+  // 如果当前是登录页，切换对应卡片
+  if (location.pathname.endsWith('login.html')) {
+    toggleLoginPage(user);
+  } else {
+    // 如果从登录页跳回来的，优先使用 afterLogin（login.html 里已处理，这里兜底）
+    if (user && sessionStorage.getItem('afterLogin')) {
+      const url = sessionStorage.getItem('afterLogin');
+      sessionStorage.removeItem('afterLogin');
+      location.href = url;
+    }
   }
-};
+});
+
 
