@@ -154,3 +154,6 @@ input::placeholder,textarea::placeholder{color:#7b8aa8}
   display: block;
 }
 
+.hidden{ display:none !important; }
+
+
