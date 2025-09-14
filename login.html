@@ -2,74 +2,106 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>登录 - LSPD</title>
   <link rel="stylesheet" href="assets/css/styles.css" />
   <style>
-    .auth-wrap{min-height:60vh;display:flex;align-items:center;justify-content:center}
-    .auth-card{
-      width:100%;max-width:420px;background:#fff;border-radius:14px;
-      box-shadow:0 10px 28px rgba(4,30,66,.12);padding:26px 22px
+    body {
+      background: #f0f4f9;
     }
-    .auth-title{margin:0 0 16px;font-size:20px;color:#041E42;text-align:center}
-    .auth-input{width:100%;padding:12px 14px;border:1px solid #d8dbe2;border-radius:8px;margin:8px 0;font-size:14px}
-    .auth-row{display:flex;gap:12px;margin-top:10px}
-    .btn{flex:1;padding:12px;border:none;border-radius:8px;cursor:pointer;font-size:14px}
-    .btn-primary{background:#1E90FF;color:#fff}
-    .btn-dark{background:#041E42;color:#fff}
-    .auth-tip{font-size:12px;color:#6b7280;text-align:center;margin-top:12px}
-    .hidden{display:none}
+    .auth-wrap {
+      min-height: 70vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .auth-card {
+      width: 100%;
+      max-width: 420px;
+      background: #fff;
+      border-radius: 12px;
+      padding: 32px 28px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+    .auth-title {
+      font-size: 22px;
+      font-weight: bold;
+      color: #04142a;
+      margin-bottom: 20px;
+    }
+    .auth-input {
+      width: 100%;
+      padding: 10px 14px;
+      margin: 8px 0;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+    .btn-row {
+      display: flex;
+      gap: 12px;
+      margin-top: 14px;
+    }
+    .btn {
+      flex: 1;
+      padding: 10px 0;
+      border: none;
+      border-radius: 8px;
+      font-size: 15px;
+      cursor: pointer;
+    }
+    .btn-primary {
+      background: #04142a;
+      color: #fff;
+    }
+    .btn-secondary {
+      background: #1976d2;
+      color: #fff;
+    }
+    .tip {
+      margin-top: 12px;
+      font-size: 12px;
+      color: #666;
+    }
   </style>
 </head>
 <body>
   <nav class="nav" aria-label="主导航">
-    <div class="brand">
-      <img src="assets/img/LSPD LOGO.png" alt="Sheriff star" style="width:40px;height:40px;object-fit:contain">
-      <span class="title">洛圣都市警察局</span>
-    </div>
-    <div class="links">
-      <a href="index.html">首页</a>
-      <a href="videos.html">视频专区</a>
-      <a href="news.html">新闻通告</a>
-      <a href="services.html">便民服务</a>
-      <a href="divisions.html">部门</a>
-      <a href="jail.html">拘留所</a>
-      <a href="careers.html">招募</a>
-      <a href="contact.html">联系</a>
-      <a href="roster.html">警员名册</a>
-      <a id="loginNav" href="login.html" class="active" data-auth="guest">登录</a>
-      <a id="logoutNav" href="javascript:void(0)" class="hidden" data-auth="user">退出</a>
+    <div class="bar">
+      <div class="brand">
+        <img src="assets/img/LSPD LOGO.png" alt="Sheriff star" style="width:40px;height:40px;object-fit:contain">
+        <span class="title">洛圣都市警察局</span>
+      </div>
+      <div class="links">
+        <a href="index.html">首页</a>
+        <a href="videos.html">视频专区</a>
+        <a href="news.html">新闻通告</a>
+        <a href="services.html">便民服务</a>
+        <a href="divisions.html">部门</a>
+        <a href="jail.html">拘留所</a>
+        <a href="careers.html">招募</a>
+        <a href="contact.html">联系</a>
+        <a href="roster.html">警员名册</a>
+        <a href="informants.html" id="informantsLink" style="display:none">线人信息</a>
+      </div>
     </div>
   </nav>
 
-  <main class="container auth-wrap">
-    <div id="loginCard" class="auth-card">
-      <h2 class="auth-title">警员登录</h2>
-      <input id="email" type="email" class="auth-input" placeholder="请输入邮箱">
-      <input id="pwd" type="password" class="auth-input" placeholder="请输入密码">
-      <div class="auth-row">
-        <button class="btn btn-dark"   onclick="register(email.value, pwd.value)">注册</button>
-        <button class="btn btn-primary" onclick="loginEmail(email.value, pwd.value)">登录</button>
+  <div class="auth-wrap">
+    <div class="auth-card">
+      <div class="auth-title">警员登录</div>
+      <input id="email" type="email" class="auth-input" placeholder="请输入邮箱" />
+      <input id="password" type="password" class="auth-input" placeholder="请输入密码" />
+      <div class="btn-row">
+        <button id="btnRegister" class="btn btn-secondary">注册</button>
+        <button id="btnLogin" class="btn btn-primary">登录</button>
       </div>
-      <p class="auth-tip">登录后将自动返回上一页或个人信息页。</p>
+      <div class="tip">登录后将自动跳转到个人信息页</div>
     </div>
+  </div>
 
-    <div id="welcomeCard" class="auth-card hidden" style="text-align:center">
-      <h2 class="auth-title">已登录</h2>
-      <p id="whoami">欢迎回来</p>
-      <div class="auth-row" style="justify-content:center">
-        <button class="btn btn-primary" onclick="goBack()">返回上一页</button>
-        <button class="btn btn-dark" onclick="logout()">退出登录</button>
-      </div>
-    </div>
-  </main>
-
-  <script>
-    function goBack(){
-      if (document.referrer && document.referrer.indexOf(location.host) >= 0) history.back();
-      else location.href = 'index.html';
-    }
-  </script>
-  <script type="module" src="assets/js/auth.js"></script>
+  <!-- 挂载登录逻辑 -->
+  <script type="module" src="assets/js/login.js"></script>
 </body>
 </html>
