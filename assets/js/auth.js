@@ -1,68 +1,51 @@
-// auth.js - simple Firebase Auth & role gating
-// Replace firebaseConfig with your own from Firebase Console
+// 使用 CDN 方式导入 Firebase
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
+// Firebase 配置
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
+  apiKey: "AIzaSyHFAhPnDfDK6xaGdnx6tel-vUYfpPpBeM",
+  authDomain: "lspd-undercover.firebaseapp.com",
+  projectId: "lspd-undercover",
+  storageBucket: "lspd-undercover.appspot.com",
+  messagingSenderId: "773732274642",
+  appId: "1:773732274642:web:2ec2470be0f81723db8b",
+  measurementId: "G-6VD389C96K"
 };
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import {
-  getAuth, onAuthStateChanged, GoogleAuthProvider,
-  signInWithPopup, signOut
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import {
-  getFirestore, doc, getDoc
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
+// 初始化 Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
-const db   = getFirestore(app);
-const provider = new GoogleAuthProvider();
 
-// buttons optional
-const loginBtn  = document.getElementById('loginBtn');
-const logoutBtn = document.getElementById('logoutBtn');
-const authState = document.getElementById('authState');
-
-loginBtn?.addEventListener('click', async ()=>{ await signInWithPopup(auth, provider); });
-logoutBtn?.addEventListener('click', async ()=>{ await signOut(auth); });
-
-async function getRolesByEmail(email){
-  if(!email) return {};
-  const ref  = doc(db, "roles", email);
-  const snap = await getDoc(ref);
-  return snap.exists() ? (snap.data() || {}) : {};
+// 登录函数
+async function login() {
+  const provider = new GoogleAuthProvider();
+  try {
+    await signInWithPopup(auth, provider);
+    alert("✅ 登录成功");
+  } catch (error) {
+    console.error(error);
+    alert("❌ 登录失败");
+  }
 }
 
-onAuthStateChanged(auth, async (user)=>{
-  if(authState) authState.textContent = user ? `已登录：${user.displayName || user.email}` : "未登录";
-  if(loginBtn)  loginBtn.style.display  = user ? "none" : "inline-flex";
-  if(logoutBtn) logoutBtn.style.display = user ? "inline-flex" : "none";
-
-  const gatedEls = document.querySelectorAll('.gated');
-  if(!user){
-    gatedEls.forEach(el=>el.classList.add('hidden'));
-    return;
+// 登出函数
+async function logout() {
+  try {
+    await signOut(auth);
+    alert("已退出登录");
+  } catch (error) {
+    console.error(error);
   }
-  const roles = await getRolesByEmail(user.email || "");
-  gatedEls.forEach(el=>{
-    const need = (el.dataset.role||"").split(',').map(s=>s.trim()).filter(Boolean);
-    let ok = false;
-    if(need.length) ok = need.some(r=>roles[r]);
-    if(!need.length) ok = true;
-    el.classList.toggle('hidden', !ok);
-  });
+}
+
+// 监听登录状态
+onAuthStateChanged(auth, user => {
+  if (user) {
+    console.log("已登录：", user.email);
+    // TODO: 这里控制只有警官能看到的板块
+  } else {
+    console.log("未登录");
+  }
 });
 
-export function requireRole(role){
-  return new Promise((resolve)=>{
-    const stop = onAuthStateChanged(auth, async (user)=>{
-      if(!user){ stop(); location.replace('index.html'); return; }
-      const roles = await getRolesByEmail(user.email || "");
-      if(roles[role] === true){ stop(); resolve(user); }
-      else { stop(); location.replace('index.html'); }
-    });
-  });
-}
