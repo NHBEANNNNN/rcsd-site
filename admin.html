@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>管理员后台 - LSPD</title>
+  <link rel="icon" href="assets/img/LSPD_LOGO.png" />
+  <style>
+    :root{--brand:#0f1c6f;--muted:#64748b}
+    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;margin:0;background:#f5f7fb;color:#0f172a}
+    .nav{display:flex;align-items:center;gap:16px;padding:12px 16px;background:#fff;border-bottom:1px solid #e5e7eb;position:sticky;top:0}
+    .nav .brand{display:flex;align-items:center;gap:10px}
+    .nav img{width:32px;height:32px;object-fit:contain}
+    .links{margin-left:auto;display:flex;gap:12px}
+    .links a{color:#334155;text-decoration:none;padding:6px 8px;border-radius:8px}
+    .links a:hover{background:#f1f5f9}
+    .container{max-width:1160px;margin:28px auto;padding:0 16px}
+    .card{background:#fff;border:1px solid #e5e7eb;border-radius:14px;box-shadow:0 4px 12px rgba(15,23,42,.04)}
+    .hd{padding:18px 20px;border-bottom:1px solid #e5e7eb;display:flex;justify-content:space-between;align-items:center}
+    .bd{padding:20px}
+    .muted{color:var(--muted)}
+    table{width:100%;border-collapse:collapse}
+    th,td{padding:10px 12px;border-bottom:1px solid #eef2f7;text-align:left;font-size:14px;vertical-align:middle}
+    th{font-weight:700;color:#334155}
+    .pill{display:inline-block;padding:3px 8px;border-radius:999px;background:#eef2ff;font-size:12px}
+    .btn{display:inline-block;padding:9px 14px;border-radius:10px;border:1px solid #e2e8f0;background:#fff;cursor:pointer;text-decoration:none;color:#0f172a}
+    .btnPrimary{background:var(--brand);color:#fff;border-color:transparent}
+    .btnSm{padding:6px 10px;font-size:13px}
+    .bar{display:flex;gap:10px;align-items:center}
+    #adminOnly{display:none}
+    #err{color:#b91c1c;margin-top:8px;display:none}
+    input[type="text"], select{width:100%;padding:7px 8px;border:1px solid #e5e7eb;border-radius:8px}
+    input:disabled, select:disabled{background:#f8fafc;color:#64748b}
+    .row-actions{display:flex;gap:8px}
+    .toolbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+    .search{max-width:260px}
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <div class="brand">
+      <img src="assets/img/LSPD_LOGO.png" alt="logo" />
+      <span class="muted">洛圣都市警察局 · 管理员后台</span>
+    </div>
+    <div class="links">
+      <a href="index.html">首页</a>
+      <a href="roster.html">警员名册</a>
+      <a href="profile.html">个人资料</a>
+      <a href="javascript:void(0)" id="logoutBtn" class="btn">退出登录</a>
+    </div>
+  </nav>
+
+  <main class="container">
+    <div class="card">
+      <div class="hd">
+        <div class="bar">
+          <span class="pill">管理员面板</span>
+          <button id="addBtn" class="btn btnSm">新增警员</button>
+        </div>
+        <div id="who" class="muted"></div>
+      </div>
+      <div class="bd">
+        <div class="toolbar">
+          <div class="muted">只有 <strong>roles/{email}.admin = true</strong> 的账户可见与编辑。</div>
+          <input id="q" class="search" type="text" placeholder="搜索姓名 / 邮箱 / 呼号 / 警号" />
+        </div>
+        <div id="err"></div>
+        <div id="adminOnly">
+          <table>
+            <thead>
+              <tr>
+                <th style="width:18%">姓名</th>
+                <th style="width:12%">警号</th>
+                <th style="width:12%">呼号</th>
+                <th style="width:18%">部门</th>
+                <th style="width:12%">状态</th>
+                <th style="width:20%">邮箱（文档ID）</th>
+                <th style="width:8%">操作</th>
+              </tr>
+            </thead>
+            <tbody id="tbody">
+              <tr><td colspan="7" class="muted">加载中…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <template id="rowTmpl">
+    <tr>
+      <td data-k="name"></td>
+      <td data-k="badge"></td>
+      <td data-k="callsign"></td>
+      <td data-k="division"></td>
+      <td data-k="status"></td>
+      <td data-k="email"></td>
+      <td class="row-actions">
+        <button class="btn btnSm edit">编辑</button>
+        <button class="btn btnSm" style="display:none" data-act="save">保存</button>
+        <button class="btn btnSm" style="display:none" data-act="cancel">取消</button>
+      </td>
+    </tr>
+  </template>
+
+  <template id="inputTmpl">
+    <div class="inputs">
+      <input type="text" data-k="name"/>
+      <input type="text" data-k="badge"/>
+      <input type="text" data-k="callsign"/>
+      <input type="text" data-k="division"/>
+      <select data-k="status">
+        <option>Active</option>
+        <option>Suspended</option>
+        <option>LOA</option>
+      </select>
+      <input type="text" data-k="email" disabled/>
+    </div>
+  </template>
+
+  <script type="module">
+    import { requireLogin, doLogout, db } from "./assets/js/auth.js";
+    import { doc, getDoc, collection, getDocs, query, orderBy, updateDoc, setDoc } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+
+    const tbody = document.getElementById("tbody");
+    const err = document.getElementById("err");
+    const who = document.getElementById("who");
+    const adminOnly = document.getElementById("adminOnly");
+    const qInput = document.getElementById("q");
+    const addBtn = document.getElementById("addBtn");
+
+    function showError(msg){
+      err.textContent = msg;
+      err.style.display = "block";
+    }
+    function clearError(){
+      err.textContent = "";
+      err.style.display = "none";
+    }
+
+    let rows = []; // {email, data}
+
+    function render(filter=""){
+      const term = filter.trim().toLowerCase();
+      tbody.innerHTML = "";
+      const r = rows.filter(r => {
+        if(!term) return true;
+        const d = r.data || {};
+        return (r.email||"").includes(term)
+          || (d.name||"").toLowerCase().includes(term)
+          || (d.callsign||"").toLowerCase().includes(term)
+          || (d.badge||"").toLowerCase().includes(term);
+      });
+      if(r.length === 0){
+        tbody.innerHTML = '<tr><td colspan="7" class="muted">无结果</td></tr>';
+        return;
+      }
+      const rowTmpl = document.getElementById("rowTmpl");
+      r.forEach(({email, data})=>{
+        const tr = rowTmpl.content.firstElementChild.cloneNode(true);
+        tr.querySelector('[data-k="name"]').textContent = data.name || "";
+        tr.querySelector('[data-k="badge"]').textContent = data.badge || "";
+        tr.querySelector('[data-k="callsign"]').textContent = data.callsign || "";
+        tr.querySelector('[data-k="division"]').textContent = data.division || "";
+        tr.querySelector('[data-k="status"]').textContent = data.status || "";
+        tr.querySelector('[data-k="email"]').textContent = email;
+
+        // 编辑逻辑
+        const editBtn = tr.querySelector('.edit');
+        const saveBtn = tr.querySelector('[data-act="save"]');
+        const cancelBtn = tr.querySelector('[data-act="cancel"]');
+
+        editBtn.addEventListener('click', () => {
+          editBtn.style.display = 'none';
+          saveBtn.style.display = 'inline-block';
+          cancelBtn.style.display = 'inline-block';
+
+          // 把单元格换成输入框
+          const inputTmpl = document.getElementById('inputTmpl');
+          const box = inputTmpl.content.firstElementChild.cloneNode(true);
+          box.querySelector('[data-k="name"]').value = data.name || "";
+          box.querySelector('[data-k="badge"]').value = data.badge || "";
+          box.querySelector('[data-k="callsign"]').value = data.callsign || "";
+          box.querySelector('[data-k="division"]').value = data.division || "";
+          box.querySelector('[data-k="status"]').value = data.status || "Active";
+          box.querySelector('[data-k="email"]').value = email;
+
+          // 替换单元格内容
+          tr.children[0].innerHTML = ""; tr.children[0].appendChild(box.querySelector('[data-k="name"]'));
+          tr.children[1].innerHTML = ""; tr.children[1].appendChild(box.querySelector('[data-k="badge"]'));
+          tr.children[2].innerHTML = ""; tr.children[2].appendChild(box.querySelector('[data-k="callsign"]'));
+          tr.children[3].innerHTML = ""; tr.children[3].appendChild(box.querySelector('[data-k="division"]'));
+          tr.children[4].innerHTML = ""; tr.children[4].appendChild(box.querySelector('[data-k="status"]'));
+          tr.children[5].innerHTML = ""; tr.children[5].appendChild(box.querySelector('[data-k="email"]'));
+        });
+
+        cancelBtn.addEventListener('click', () => {
+          render(qInput.value);
+        });
+
+        saveBtn.addEventListener('click', async () => {
+          clearError();
+          try {
+            const updated = {
+              name: tr.children[0].querySelector('input').value.trim(),
+              badge: tr.children[1].querySelector('input').value.trim(),
+              callsign: tr.children[2].querySelector('input').value.trim(),
+              division: tr.children[3].querySelector('input').value.trim(),
+              status: tr.children[4].querySelector('select').value,
+              // phone 留给以后扩展
+            };
+            const emailLower = (email||"").toLowerCase();
+            await updateDoc(doc(db, 'user', emailLower), updated);
+            // 更新内存并回显
+            const target = rows.find(x => x.email === email);
+            if(target){ target.data = {...target.data, ...updated}; }
+            render(qInput.value);
+          } catch (e) {
+            console.error(e);
+            showError('保存失败：权限不足或网络错误。');
+          }
+        });
+
+        tbody.appendChild(tr);
+      });
+    }
+
+    async function loadAll(){
+      try{
+        const qs = await getDocs(query(collection(db, 'user'), orderBy('name')));
+        rows = [];
+        qs.forEach(d => rows.push({email: d.id, data: d.data() || {}}));
+        render(qInput.value);
+      }catch(e){
+        console.error(e);
+        showError('加载用户列表失败：可能是规则未放行或索引问题。');
+      }
+    }
+
+    // 新增用户（创建文档）
+    addBtn.addEventListener('click', async () => {
+      const email = prompt('请输入新用户邮箱（将作为文档ID，自动小写）：');
+      if(!email) return;
+      const id = email.trim().toLowerCase();
+      const name = prompt('姓名：') || '';
+      const badge = prompt('警号：') || '';
+      const callsign = prompt('呼号：') || '';
+      const division = prompt('部门：') || '';
+      const status = prompt('状态（Active/Suspended/LOA）：') || 'Active';
+      try{
+        await setDoc(doc(db, 'user', id), { name, badge, callsign, division, status });
+        await loadAll();
+      }catch(e){
+        console.error(e);
+        showError('新增失败：请检查规则与网络。');
+      }
+    });
+
+    qInput.addEventListener('input', () => render(qInput.value));
+
+    requireLogin(async (user) => {
+      document.getElementById('logoutBtn').onclick = () => doLogout();
+      who.textContent = user.email;
+
+      // 检查管理员
+      const emailLower = (user.email||'').toLowerCase();
+      const roleSnap = await getDoc(doc(db, 'roles', emailLower));
+      const isAdmin = roleSnap.exists() && roleSnap.data().admin === true;
+      if(!isAdmin){
+        err.textContent = '你不是管理员，无法访问该页面。';
+        err.style.display = 'block';
+        tbody.innerHTML = '<tr><td colspan="7" class="muted">没有权限</td></tr>';
+        return;
+      }
+      adminOnly.style.display = 'block';
+      await loadAll();
+    });
+  </script>
+</body>
+</html>
