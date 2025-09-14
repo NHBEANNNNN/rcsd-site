@@ -88,6 +88,16 @@
    本站为LSPD执法机构。紧急情况请拨打 LSPD报警电话。
   </footer>
   
+  <div class="card" style="max-width:360px;margin:12px 0;padding:12px;">
+  <h3>邮箱登录</h3>
+  <input id="email" type="email" placeholder="邮箱" style="width:100%;padding:8px;margin:6px 0;">
+  <input id="pwd" type="password" placeholder="密码" style="width:100%;padding:8px;margin:6px 0;">
+  <div style="display:flex;gap:8px;">
+    <button onclick="register(email.value, pwd.value)">注册</button>
+    <button onclick="loginEmail(email.value, pwd.value)">登录</button>
+  </div>
+</div>
+  
 <script type="module" src="assets/js/auth.js"></script>
 </body>
 </html>
