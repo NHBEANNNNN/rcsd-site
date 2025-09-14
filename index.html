@@ -85,7 +85,10 @@
   <footer class="footer">
    本站为LSPD执法机构。紧急情况请拨打 LSPD报警电话。
   </footer>
-    
+  
+  <a id="loginNav" href="login.html" data-auth="guest">登录</a>
+<a id="logoutNav" href="javascript:void(0)" class="hidden" data-auth="user" onclick="logout()">退出</a>
+<span id="whoami" class="muted hidden" data-auth="user"></span>
 <script type="module" src="assets/js/auth.js"></script>
 </body>
 </html>
