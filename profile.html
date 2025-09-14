@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>个人信息 - LSPD</title>
+  <link rel="stylesheet" href="assets/css/styles.css" />
+  <script>window.REQUIRE_AUTH = true;</script>
+  <style>
+    .wrap{max-width:880px;margin:28px auto;padding:0 12px}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+    .card{background:#fff;border-radius:14px;box-shadow:0 10px 28px rgba(4,30,66,.12);padding:18px}
+    .card h3{margin:4px 0 12px;color:#041E42}
+    .row{display:flex;gap:12px}
+    .lbl{font-size:13px;color:#6b7280;margin:6px 0 4px}
+    .ipt{width:100%;padding:10px 12px;border:1px solid #d8dbe2;border-radius:8px}
+    .btn{padding:10px 14px;border:none;border-radius:8px;cursor:pointer}
+    .btn-primary{background:#1E90FF;color:#fff}
+    .btn-gray{background:#e5e7eb;color:#111827}
+    .muted{color:#6b7280;font-size:12px}
+    .hidden{display:none}
+  </style>
+</head>
+<body>
+  <nav class="nav" aria-label="主导航">
+    <div class="brand">
+      <img src="assets/img/LSPD LOGO.png" alt="Sheriff star" style="width:40px;height:40px;object-fit:contain">
+      <span class="title">洛圣都市警察局</span>
+    </div>
+    <div class="links">
+      <a href="index.html">首页</a>
+      <a href="videos.html">视频专区</a>
+      <a href="news.html">新闻通告</a>
+      <a href="services.html">便民服务</a>
+      <a href="divisions.html">部门</a>
+      <a href="jail.html">拘留所</a>
+      <a href="careers.html">招募</a>
+      <a href="contact.html">联系</a>
+      <a href="roster.html">警员名册</a>
+      <a id="loginNav" href="login.html" data-auth="guest">登录</a>
+      <a id="logoutNav" href="javascript:void(0)" class="hidden" data-auth="user" onclick="logout()">退出</a>
+      <span id="whoami" class="muted hidden" data-auth="user" style="margin-left:8px"></span>
+    </div>
+  </nav>
+
+  <main class="wrap">
+    <div class="grid">
+      <section class="card">
+        <h3>个人信息</h3>
+        <p class="muted" id="currentEmail">当前账号：</p>
+
+        <label class="lbl">姓名 / 昵称</label>
+        <input id="p_name" class="ipt">
+        <label class="lbl">呼号 / 徽章号</label>
+        <input id="p_callsign" class="ipt">
+        <label class="lbl">部门</label>
+        <input id="p_division" class="ipt">
+        <label class="lbl">联系电话</label>
+        <input id="p_phone" class="ipt">
+
+        <div class="row" style="margin-top:12px">
+          <button class="btn btn-primary" onclick="saveMyProfile()">保存我的资料</button>
+          <button class="btn btn-gray" onclick="reloadMyProfile()">刷新</button>
+        </div>
+        <p class="muted" id="mySaveTip" style="margin-top:6px"></p>
+      </section>
+
+      <section class="card hidden" id="adminBox">
+        <h3>管理员编辑</h3>
+        <p class="muted">仅管理员可见。</p>
+
+        <label class="lbl">目标邮箱</label>
+        <input id="a_email" class="ipt">
+        <div class="row" style="margin:12px 0">
+          <button class="btn btn-gray" onclick="loadUser()">加载</button>
+          <button class="btn btn-primary" onclick="saveUser()">保存</button>
+        </div>
+
+        <label class="lbl">姓名</label>
+        <input id="a_name" class="ipt">
+        <label class="lbl">呼号</label>
+        <input id="a_callsign" class="ipt">
+        <label class="lbl">部门</label>
+        <input id="a_division" class="ipt">
+        <label class="lbl">联系电话</label>
+        <input id="a_phone" class="ipt">
+        <p class="muted" id="adminTip" style="margin-top:6px"></p>
+      </section>
+    </div>
+  </main>
+
+  <script type="module" src="assets/js/auth.js"></script>
+  <script type="module" src="assets/js/profile.js"></script>
+</body>
+</html>
