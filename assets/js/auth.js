@@ -1,120 +1,111 @@
-// ===== Firebase v10 CDN =====
+<!-- 放在: assets/js/auth.js（整文件替换） -->
+<script type="module">
+// ----- Firebase CDN -----
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { 
+  getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut 
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { 
+  getFirestore, doc, getDoc, setDoc, updateDoc, collection, getDocs, query, where 
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-// === 你的 Firebase 配置 ===
+// ----- 你的项目配置（已替换成你在控制台生成的配置） -----
 const firebaseConfig = {
   apiKey: "AIzaSyAFHaPnQFnDX6akaGdnxKteU-vlYfPpBeM",
   authDomain: "lspd-undercover.firebaseapp.com",
   projectId: "lspd-undercover",
   storageBucket: "lspd-undercover.firebasestorage.app",
   messagingSenderId: "773732274642",
-  appId: "1:773732274642:web:2ec2470be0f8123db80b",
+  appId: "1:773732274642:web:2ec470bee070f1023db80b",
   measurementId: "G-6DY309969K"
 };
 
-// 初始化
-const app  = initializeApp(firebaseConfig);
-const auth = getAuth(app);
+// ----- 初始化 -----
+export const app = initializeApp(firebaseConfig);
+export const auth = getAuth(app);
+export const db = getFirestore(app);
 
-// ====== DOM 工具 ======
-const $ = (sel) => document.querySelector(sel);
-const show = (el) => el && (el.classList.remove('hidden'), el.style.removeProperty('display'));
-const hide = (el) => el && (el.classList.add('hidden'), el.style.display = 'none');
-
-// 登录/退出可见性
-function toggleAuthVisibility(user){
-  document.querySelectorAll('[data-auth="guest"]').forEach(el => user ? hide(el) : show(el));
-  document.querySelectorAll('[data-auth="user"]').forEach(el => user ? show(el) : hide(el));
-
-  const who = $('#whoami');
-  if (who) {
-    if (user?.email) {
-      who.textContent = `👮 ${user.email}`;
-      show(who);
-    } else hide(who);
-  }
+// ----- 工具：查询角色（基于 roles/{emailLower}.role）-----
+export async function getRoleByEmail(email) {
+  if (!email) return null;
+  const key = String(email).toLowerCase();
+  const ref = doc(db, "roles", key);
+  const snap = await getDoc(ref);
+  return snap.exists() ? snap.data().role : null;
 }
 
-// 受限页守卫：在页面里放 <script>window.REQUIRE_AUTH = true;</script>
-function guardIfRequired(user){
-  if (window.REQUIRE_AUTH && !user) {
-    sessionStorage.setItem('afterLogin', location.href);
-    location.href = 'login.html';
-  }
-}
-
-// 登录页的切换
-function toggleLoginPage(user){
-  const loginCard   = $('#loginCard');
-  const welcomeCard = $('#welcomeCard');
-  const loginNav = $('#loginNav'), logoutNav = $('#logoutNav');
-
-  if (user){
-    hide(loginCard);  show(welcomeCard);
-    if (logoutNav) show(logoutNav);
-    if (loginNav)  hide(loginNav);
-    const who = $('#whoami');
-    if (who) { who.textContent = `👮 ${user.email}`; show(who); }
-
-    // 登录页：无 afterLogin 则默认去个人信息页
-    const back = sessionStorage.getItem('afterLogin');
-    if (back) { sessionStorage.removeItem('afterLogin'); location.href = back; }
-    else location.href = 'profile.html';
+// ----- 登录（Email/密码）后按角色跳转 -----
+export async function loginEmailPassword(email, password) {
+  await signInWithEmailAndPassword(auth, email, password);
+  const role = await getRoleByEmail(email);
+  if (role === "admin") {
+    location.href = "admin.html";
   } else {
-    show(loginCard); hide(welcomeCard);
-    if (logoutNav) hide(logoutNav);
-    if (loginNav)  show(loginNav);
+    location.href = "profile.html";
   }
 }
 
-// ====== 提供给页面的操作 ======
-window.loginEmail = async (email, pwd) => {
+// ----- 登出 -----
+export async function doLogout() {
+  await signOut(auth);
+  location.href = "index.html";
+}
+
+// ----- 页面守卫：需要已登录 -----
+export function requireLogin(redirect = "login.html") {
+  onAuthStateChanged(auth, (user) => {
+    if (!user) location.href = redirect;
+  });
+}
+
+// ----- 页面守卫：需要管理员 -----
+export function requireAdmin(redirect = "login.html") {
+  onAuthStateChanged(auth, async (user) => {
+    if (!user) return location.href = redirect;
+    const role = await getRoleByEmail(user.email);
+    if (role !== "admin") location.href = "profile.html";
+  });
+}
+
+// ----- Admin：设置某邮箱为管理员 -----
+export async function setAdminByEmail(emailLower) {
+  const ref = doc(db, "roles", String(emailLower).toLowerCase());
+  await setDoc(ref, { role: "admin" }, { merge: true });
+}
+
+// ----- Users 集合读写 -----
+export async function readUserDoc(uid) {
+  const ref = doc(db, "users", uid);
+  const snap = await getDoc(ref);
+  return snap.exists() ? snap.data() : null;
+}
+
+export async function writeUserDoc(uid, data) {
+  // 受 Security Rules 保护：仅 admin 可写
+  const ref = doc(db, "users", uid);
+  await setDoc(ref, data, { merge: true });
+}
+
+// ----- Admin：列出全部 users -----
+export async function listAllUsers() {
+  const col = collection(db, "users");
+  const snaps = await getDocs(col);
+  return snaps.docs.map(d => ({ uid: d.id, ...d.data() }));
+}
+
+// 兼容现有首页的两个按钮（若你还在 index.html 用到）
+window.login = async () => {
+  const email = document.getElementById("email")?.value || "";
+  const pwd = document.getElementById("password")?.value || "";
   try {
-    await signInWithEmailAndPassword(auth, email, pwd);
-    alert('✅ 登录成功');
+    await loginEmailPassword(email, pwd);
   } catch (e) {
-    console.error('登录失败:', e);
-    alert('❌ 登录失败：' + (e?.message || '请检查账号/密码'));
+    alert("登录失败：" + (e?.message || e));
   }
 };
+window.logout = () => doLogout();
 
-window.register = async (email, pwd) => {
-  try {
-    await createUserWithEmailAndPassword(auth, email, pwd);
-    alert('✅ 注册并登录成功');
-  } catch (e) {
-    console.error('注册失败:', e);
-    alert('❌ 注册失败：' + (e?.message || '请检查邮箱格式与密码强度'));
-  }
-};
+</script>
 
-window.logout = async () => {
-  try {
-    await signOut(auth);
-    alert('已退出');
-  } catch (e) {
-    console.error('退出失败:', e);
-    alert('❌ 退出失败：' + (e?.message || '请稍后再试'));
-  }
-};
-
-// ====== 全站状态监听 ======
-onAuthStateChanged(auth, (user) => {
-  toggleAuthVisibility(user);
-  guardIfRequired(user);
-
-  // 登录页专属逻辑
-  if (location.pathname.endsWith('login.html')) {
-    toggleLoginPage(user);
-  } else {
-    // 从登录回跳兜底
-    if (user && sessionStorage.getItem('afterLogin')) {
-      const url = sessionStorage.getItem('afterLogin');
-      sessionStorage.removeItem('afterLogin');
-      location.href = url;
-    }
-  }
-});
 
 
