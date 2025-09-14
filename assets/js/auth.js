@@ -104,6 +104,30 @@ window.login = async () => {
   }
 };
 window.logout = () => doLogout();
+// 下面是示意：合并到你自己的 initialize 之后的 onAuthStateChanged 回调中
+import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+const db = getFirestore();
+const auth = getAuth();
+
+onAuthStateChanged(auth, async (user) => {
+  const adminLink = document.getElementById('adminLink');
+  if (adminLink) adminLink.style.display = 'none';
+
+  if (!user) {
+    // 未登录就不显示
+    return;
+  }
+  // 检查角色
+  const email = (user.email || "").toLowerCase();
+  const roleSnap = await getDoc(doc(db, "roles", email));
+  const isAdmin = roleSnap.exists() && String(roleSnap.data().role).toLowerCase() === "admin";
+
+  if (isAdmin && adminLink) {
+    adminLink.style.display = "inline-block";
+  }
+});
 
 </script>
 
