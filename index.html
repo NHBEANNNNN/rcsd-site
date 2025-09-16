@@ -1,51 +1,45 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>洛圣都城市警察局- LSPD</title>
-  <link rel="stylesheet" href="assets/css/styles.css">
-  <!-- 保留你的 news.js，引入放在这里也可以；加 v 参数避免缓存 -->
+  <link rel="stylesheet" href="assets/css/styles.css" />
+  <!-- 保留 news.js，引入放在这里也可以；加 v 参数避免缓存 -->
   <script defer src="assets/js/news.js?v=3"></script>
 </head>
 <body>
-
+  <!-- 导航栏 -->
   <nav class="nav" aria-label="主导航">
-    <div class="bar">
-      <div class="brand">
-        <img src="assets/img/LSPD LOGO.png" alt="Sheriff star">
-        <div class="title">洛圣都城市警察局</div>
-        <div style="font-size:12px;color:var(--muted)">Los Santos Police Department·</div>
-      </div>
-
-      <div class="links">
-        <a href="index.html" class="">首页</a>
-        <a href="videos.html" class="">视频专区</a>
-        <a href="news.html" class="active">新闻通告</a>
-        <a href="services.html" class="">便民服务</a>
-        <a href="divisions.html" class="">部门</a>
-        <a href="jail.html" class="">拘留所</a>
-        <a href="careers.html" class="">招募</a>
-        <a href="contact.html" class="">联系</a>
-        <a href="roster.html" class="">警员名册</a>
-        <a href="informants.html" id="informantsLink" style="display:none;">线人板块</a>
-        <a href="contraba
-          nd.html" id="contrabandLink" style="display:none;">
-          赃物上报</a>
-   
-        <a
-          
-          href="login.html" id="loginLink">登录</a>
-      </div>
+    <div class="brand">
+      <img src="assets/img/LSPD LOGO.png" alt="LSPD logo" style="width:40px;height:40px;object-fit:contain" />
+      <span class="title">洛圣都城市警察局</span>
+    </div>
+    <div class="links">
+      <a href="index.html">首页</a>
+      <a href="videos.html">视频专区</a>
+      <a href="news.html" class="active">新闻通告</a>
+      <a href="services.html">便民服务</a>
+      <a href="divisions.html">部门</a>
+      <a href="jail.html">拘留所</a>
+      <a href="careers.html">招募</a>
+      <a href="contact.html">联系</a>
+      <a href="roster.html">警员名册</a>
+      <a href="informants.html" id="informantsLink" style="display:none;">线人板块</a>
+      <a href="contraband.html" id="contrabandLink" style="display:none;">赃物上报</a>
+      <a href="contraband-admin.html" id="contrabandAdminLink" style="display:none;">赃物管理</a>
+      <a href="profile.html">个人资料</a>
+      <a href="login.html" id="loginLink">登录</a>
+      <a href="javascript:void(0)" id="logoutBtn" style="display:none;">退出登录</a>
     </div>
   </nav>
 
-
+  <!-- 主内容：英雄区与功能格子 -->
   <main class="container">
     <section class="hero">
       <div class="card">
         <span class="badge">Police Department · 警察</span>
-        <h1>服务与守护 · Service & Protection</h1>
+        <h1>服务与守护 · Service &amp; Protection</h1>
         <p>我们致力于维护洛圣都的安全、秩序与公正。通过巡逻执法、战术响应、拘留运营与社区合作，持续提升公众信任。</p>
         <div class="kpis">
           <div><b>24/7</b><br>全天候响应</div>
@@ -66,10 +60,6 @@
         <p class="notice">免责声明：本网站为 <b>RP 服务器</b>；所有电话/邮箱为游戏内容，不对应现实。</p>
       </div>
     </section>
-
-    
-    
-    
     <section class="grid">
       <div class="card">
         <h3>最新通告</h3>
@@ -86,19 +76,59 @@
         <ul>
           <li>防诈骗：未知链接不点、不明汇款不转。</li>
           <li>夜间步行请结伴同行，注意照明与周边观察。</li>
-          
-
           <li>儿童座椅与安全带必须正确使用。</li>
         </ul>
       </div>
     </section>
   </main>
-  
+
   <footer class="footer">
-   本站为LSPD执法机构。紧急情况请拨打 LSPD报警电话。
+    本站为LSPD执法机构。紧急情况请拨打 LSPD报警电话。
   </footer>
-  
-<script type="module" src="assets/js/header-auth.js"></script>  
-</b
-  ody>
+
+  <!-- 动态登录与权限检测脚本 -->
+  <script type="module">
+    import { auth, db, doLogout } from './assets/js/auth.js';
+    import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js';
+    import { doc, getDoc } from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js';
+
+    const loginLink = document.getElementById('loginLink');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const informantsLink = document.getElementById('informantsLink');
+    const contrabandLink = document.getElementById('contrabandLink');
+    const contrabandAdminLink = document.getElementById('contrabandAdminLink');
+
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        if (loginLink) loginLink.style.display = 'none';
+        if (logoutBtn) logoutBtn.style.display = 'inline';
+        if (informantsLink) informantsLink.style.display = 'inline';
+        if (contrabandLink) contrabandLink.style.display = 'inline';
+        // 判断是否管理员
+        try {
+          const emailLower = (user.email || '').toLowerCase();
+          const roleRef = doc(db, 'roles', emailLower);
+          const roleSnap = await getDoc(roleRef);
+          if (roleSnap.exists() && roleSnap.data().admin === true) {
+            if (contrabandAdminLink) contrabandAdminLink.style.display = 'inline';
+          }
+        } catch (err) {
+          console.error(err);
+        }
+      } else {
+        if (loginLink) loginLink.style.display = 'inline';
+        if (logoutBtn) logoutBtn.style.display = 'none';
+        if (informantsLink) informantsLink.style.display = 'none';
+        if (contrabandLink) contrabandLink.style.display = 'none';
+        if (contrabandAdminLink) contrabandAdminLink.style.display = 'none';
+      }
+    });
+
+    if (logoutBtn) {
+      logoutBtn.addEventListener('click', async () => {
+        await doLogout();
+      });
+    }
+  </script>
+</body>
 </html>
