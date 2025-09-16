@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>赃物管理 - LSPD</title>
+    <link rel="stylesheet" href="assets/css/styles.css" />
+  </head>
+  <body>
+    <nav class="nav">
+      <div class="brand">
+        <img src="assets/img/LSPD LOGO.png" alt="LSPD logo" />
+        <span class="title">洛圣都城市警察局</span>
+      </div>
+      <div class="links">
+        <a href="index.html">首页</a>
+        <a href="contraband.html" id="contrabandLink" style="display:none">赃物上报</a>
+        <a href="contraband-admin.html" id="contrabandAdminLink" style="display:none">赃物管理</a>
+        <a href="login.html" id="loginLink">登录</a>
+        <a href="javascript:void(0)" id="logoutBtn" style="display:none">退出登录</a>
+      </div>
+    </nav>
+
+    <main class="container">
+      <h1>赃物管理</h1>
+      <div id="statsKpis" class="kpis"></div>
+      <div id="err" style="color:red;display:none"></div>
+      <div id="loading">加载中...</div>
+      <table id="goodsTable" style="display:none;margin-top:12px;">
+        <thead>
+          <tr>
+            <th>物品名称</th>
+            <th>数量</th>
+            <th>描述</th>
+            <th>上报人</th>
+            <th>状态</th>
+            <th>上报时间</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody id="goodsBody"></tbody>
+      </table>
+    </main>
+
+    <script type="module">
+      import { auth, db, requireLogin, doLogout } from './assets/js/auth.js';
+      import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js';
+      import {
+        doc, getDoc, getDocs, collection, query, orderBy, updateDoc, deleteDoc
+      } from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js';
+
+      const loginLink = document.getElementById('loginLink');
+      const logoutBtn = document.getElementById('logoutBtn');
+      const contrabandLink = document.getElementById('contrabandLink');
+      const contrabandAdminLink = document.getElementById('contrabandAdminLink');
+
+      onAuthStateChanged(auth, async (user) => {
+        if (user) {
+          loginLink.style.display = 'none';
+          logoutBtn.style.display = 'inline';
+          contrabandLink.style.display = 'inline';
+          const roleSnap = await getDoc(doc(db, 'roles', user.email.toLowerCase()));
+          if (roleSnap.exists() && roleSnap.data().admin) {
+            contrabandAdminLink.style.display = 'inline';
+          }
+        } else {
+          loginLink.style.display = 'inline';
+          logoutBtn.style.display = 'none';
+          contrabandLink.style.display = 'none';
+          contrabandAdminLink.style.display = 'none';
+        }
+      });
+
+      logoutBtn.addEventListener('click', async () => { await doLogout(); });
+
+      requireLogin(async (user) => {
+        const roleSnap = await getDoc(doc(db, 'roles', user.email.toLowerCase()));
+        if (!roleSnap.exists() || !roleSnap.data().admin) {
+          document.getElementById('loading').style.display = 'none';
+          document.getElementById('err').textContent = '您不是管理员，无法访问此页面。';
+          document.getElementById('err').style.display = 'block';
+          return;
+        }
+
+        let processedCount = 0, pendingCount = 0, totalQuantity = 0;
+        const categoryCounts = {}; // { item: { processed: n, pending: m } }
+
+        const q = query(collection(db, 'contraband'), orderBy('createdAt','desc'));
+        const snapshot = await getDocs(q);
+        const goodsBody = document.getElementById('goodsBody');
+        goodsBody.innerHTML = '';
+
+        snapshot.forEach(docSnap => {
+          const data = docSnap.data();
+          const qty = parseInt(data.quantity, 10) || 0;
+          const status = (data.status || '').toLowerCase();
+          const isProcessed = status.startsWith('proc');
+
+          if (isProcessed) processedCount++; else pendingCount++;
+          totalQuantity += qty;
+
+          const item = data.itemName || '未知';
+          if (!categoryCounts[item]) categoryCounts[item] = { processed: 0, pending: 0 };
+          if (isProcessed) categoryCounts[item].processed += qty;
+          else categoryCounts[item].pending += qty;
+
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${item}</td>
+            <td style="text-align:center">${qty}</td>
+            <td>${(data.description||'').substring(0,100)}</td>
+            <td>${data.user||''}</td>
+            <td>${data.status||''}</td>
+            <td>${data.createdAt ? new Date(data.createdAt.seconds*1000).toLocaleString() : ''}</td>
+            <td>
+              <button class="btn btn-outline edit-btn" data-id="${docSnap.id}">编辑</button>
+              <button class="btn btn-primary delete-btn" data-id="${docSnap.id}">删除</button>
+            </td>`;
+          goodsBody.appendChild(tr);
+        });
+
+        const statsEl = document.getElementById('statsKpis');
+        statsEl.innerHTML = `
+          <div class="card"><h3>已处理</h3><p>${processedCount} 条目</p></div>
+          <div class="card"><h3>未处理</h3><p>${pendingCount} 条目</p></div>
+          <div class="card"><h3>总数量</h3><p>${totalQuantity} 件</p></div>
+          <div class="card" style="grid-column:1/-1">
+            <h3>各物品类别总数</h3>
+            <ul class="list">
+              ${Object.entries(categoryCounts).map(([item,val]) =>
+                `<li>${item}：已处理 ${val.processed} / 未处理 ${val.pending}</li>`
+              ).join('')}
+            </ul>
+          </div>`;
+
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('goodsTable').style.display = 'table';
+      });
+    </script>
+  </body>
+</html>
