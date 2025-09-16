@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>赃物管理 - LSPD</title>
+  <link rel="stylesheet" href="assets/css/styles.css" />
+</head>
+<body>
+  <!-- 导航栏 -->
+  <nav class="nav" aria-label="主导航">
+    <div class="brand">
+      <img src="assets/img/LSPD LOGO.png" alt="LSPD logo" style="width:40px;height:40px;object-fit:contain" />
+      <span class="title">洛圣都城市警察局</span>
+    </div>
+    <div class="links">
+      <a href="index.html">首页</a>
+      <a href="videos.html">视频专区</a>
+      <a href="news.html">新闻通告</a>
+      <a href="services.html">便民服务</a>
+      <a href="divisions.html">部门</a>
+      <a href="jail.html">拘留所</a>
+      <a href="careers.html">招募</a>
+      <a href="contact.html">联系</a>
+      <a href="roster.html">警员名册</a>
+      <a href="informants.html" id="informantsLink" style="display:none;">线人信息</a>
+      <a href="contraband.html" id="contrabandLink" style="display:none;">赃物上报</a>
+      <a href="contraband-admin.html" id="contrabandAdminLink" style="display:none;">赃物管理</a>
+      <a href="profile.html">个人资料</a>
+      <a href="login.html" id="loginLink">登录</a>
+      <a href="javascript:void(0)" id="logoutBtn" style="display:none;">退出登录</a>
+    </div>
+  </nav>
+
+  <!-- 主内容 -->
+  <main class="container">
+    <h1>赃物管理</h1>
+    <p class="muted">此页面列出所有上报的赃物，仅管理员可见。</p>
+    <div id="err" style="color:#b91c1c;margin-top:12px;display:none;"></div>
+    <div id="loading" class="muted" style="margin-top:12px;">加载中...</div>
+    <table id="goodsTable" style="width:100%;border-collapse:collapse;margin-top:12px;display:none;">
+      <thead>
+        <tr>
+          <th style="padding:10px;border-bottom:1px solid #e5e7eb;">物品名称</th>
+          <th style="padding:10px;border-bottom:1px solid #e5e7eb;">数量</th>
+          <th style="padding:10px;border-bottom:1px solid #e5e7eb;">描述</th>
+          <th style="padding:10px;border-bottom:1px solid #e5e7eb;">提交人</th>
+          <th style="padding:10px;border-bottom:1px solid #e5e7eb;">状态</th>
+          <th style="padding:10px;border-bottom:1px solid #e5e7eb;">提交时间</th>
+          <th style="padding:10px;border-bottom:1px solid #e5e7eb;">操作</th>
+        </tr>
+      </thead>
+      <tbody id="goodsBody"></tbody>
+    </table>
+  </main>
+
+  <!-- 脚本：验证管理员并列出赃物 -->
+  <script type="module">
+    import { auth, db, requireLogin, doLogout } from './assets/js/auth.js';
+    import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js';
+    import { doc, getDoc, getDocs, collection, query, orderBy, updateDoc, deleteDoc } from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js';
+
+    const loginLink = document.getElementById('loginLink');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const informantsLink = document.getElementById('informantsLink');
+    const contrabandLink = document.getElementById('contrabandLink');
+    const contrabandAdminLink = document.getElementById('contrabandAdminLink');
+
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        loginLink.style.display = 'none';
+        logoutBtn.style.display = 'inline';
+        if (informantsLink) informantsLink.style.display = 'inline';
+        if (contrabandLink) contrabandLink.style.display = 'inline';
+        // 检查管理员
+        try {
+          const emailLower = (user.email || '').toLowerCase();
+          const roleSnap = await getDoc(doc(db, 'roles', emailLower));
+          const isAdmin = roleSnap.exists() && roleSnap.data().admin === true;
+          if (isAdmin) {
+            if (contrabandAdminLink) contrabandAdminLink.style.display = 'inline';
+          }
+        } catch (e) {
+          console.error('无法判断管理员权限', e);
+        }
+      } else {
+        loginLink.style.display = 'inline';
+        logoutBtn.style.display = 'none';
+        if (informantsLink) informantsLink.style.display = 'none';
+        if (contrabandLink) contrabandLink.style.display = 'none';
+        if (contrabandAdminLink) contrabandAdminLink.style.display = 'none';
+      }
+    });
+
+    logoutBtn.addEventListener('click', async () => {
+      await doLogout();
+    });
+
+    requireLogin(async (user) => {
+      // 验证是否管理员
+      const emailLower = (user.email || '').toLowerCase();
+      const roleSnap = await getDoc(doc(db, 'roles', emailLower));
+      const isAdmin = roleSnap.exists() && roleSnap.data().admin === true;
+      if (!isAdmin) {
+        document.getElementById('loading').style.display = 'none';
+        const err = document.getElementById('err');
+        err.textContent = '您不是管理员，无法访问此页面。';
+        err.style.display = 'block';
+        return;
+      }
+      // 加载列表
+      const goodsBody = document.getElementById('goodsBody');
+      try {
+        const q = query(collection(db, 'contraband'), orderBy('createdAt', 'desc'));
+        const snapshot = await getDocs(q);
+        goodsBody.innerHTML = '';
+        snapshot.forEach(docSnap => {
+          const data = docSnap.data();
+          const tr = document.createElement('tr');
+          // 创建行内容，包括操作按钮。数据的 id 用于更新/删除
+          tr.innerHTML = `
+            <td style="padding:8px;border-bottom:1px solid #e5e7eb;">${data.itemName || ''}</td>
+            <td style="padding:8px;border-bottom:1px solid #e5e7eb;text-align:center;">${data.quantity || ''}</td>
+            <td style="padding:8px;border-bottom:1px solid #e5e7eb;">${(data.description || '').substring(0,100)}</td>
+            <td style="padding:8px;border-bottom:1px solid #e5e7eb;">${data.user || ''}</td>
+            <td style="padding:8px;border-bottom:1px solid #e5e7eb;">${data.status || ''}</td>
+            <td style="padding:8px;border-bottom:1px solid #e5e7eb;">${data.createdAt ? new Date(data.createdAt.seconds * 1000).toLocaleString() : ''}</td>
+            <td style="padding:8px;border-bottom:1px solid #e5e7eb;white-space:nowrap;">
+              <button class="edit-btn" data-id="${docSnap.id}" style="margin-right:4px;">编辑</button>
+              <button class="delete-btn" data-id="${docSnap.id}">删除</button>
+            </td>
+          `;
+          goodsBody.appendChild(tr);
+        });
+        // 按钮点击事件：编辑和删除
+        document.querySelectorAll('.edit-btn').forEach(btn => {
+          btn.addEventListener('click', async (e) => {
+            const id = e.target.getAttribute('data-id');
+            const docRef = doc(db, 'contraband', id);
+            try {
+              const snap = await getDoc(docRef);
+              if (!snap.exists()) return;
+              const data = snap.data();
+              // 使用 prompt 获取修改值（留空则不改）
+              const newName = window.prompt('修改物品名称', data.itemName);
+              const newQtyStr = window.prompt('修改数量', data.quantity);
+              const newDesc = window.prompt('修改描述', data.description);
+              const newStatus = window.prompt('修改状态', data.status || 'pending');
+              const updates = {};
+              if (newName !== null && newName.trim() !== '' && newName !== data.itemName) {
+                updates.itemName = newName.trim();
+              }
+              if (newQtyStr !== null) {
+                const q = parseInt(newQtyStr, 10);
+                if (!Number.isNaN(q) && q > 0 && q !== data.quantity) {
+                  updates.quantity = q;
+                }
+              }
+              if (newDesc !== null && newDesc !== data.description) {
+                updates.description = newDesc;
+              }
+              if (newStatus !== null && newStatus !== data.status) {
+                updates.status = newStatus;
+              }
+              if (Object.keys(updates).length > 0) {
+                await updateDoc(docRef, updates);
+                alert('更新成功');
+                // 简单刷新：重新加载页面或重新拉取数据
+                window.location.reload();
+              }
+            } catch (err) {
+              console.error('更新失败', err);
+              alert('更新失败：' + err.message);
+            }
+          });
+        });
+        document.querySelectorAll('.delete-btn').forEach(btn => {
+          btn.addEventListener('click', async (e) => {
+            const id = e.target.getAttribute('data-id');
+            if (!window.confirm('确定删除该记录吗？')) return;
+            try {
+              await deleteDoc(doc(db, 'contraband', id));
+              alert('删除成功');
+              window.location.reload();
+            } catch (err) {
+              console.error('删除失败', err);
+              alert('删除失败：' + err.message);
+            }
+          });
+        });
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('goodsTable').style.display = 'table';
+      } catch (err) {
+        console.error(err);
+        const errDiv = document.getElementById('err');
+        errDiv.textContent = '加载赃物列表失败：' + err.message;
+        errDiv.style.display = 'block';
+        document.getElementById('loading').style.display = 'none';
+      }
+    });
+  </script>
+</body>
+</html>
