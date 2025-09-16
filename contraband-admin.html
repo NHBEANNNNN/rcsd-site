@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>赃物管理 - LSPD</title>
+    <!-- 使用站点的主题样式 -->
+    <link rel="stylesheet" href="assets/css/styles.css" />
+  </head>
+  <body>
+    <!-- 顶部导航，复制自原站点以保持风格一致 -->
+    <nav class="nav" aria-label="主导航">
+      <div class="brand">
+        <img
+          src="assets/img/LSPD LOGO.png"
+          alt="LSPD logo"
+          style="width: 40px; height: 40px; object-fit: contain"
+        />
+        <span class="title">洛圣都城市警察局</span>
+      </div>
+      <div class="links">
+        <a href="index.html">首页</a>
+        <a href="videos.html">视 频专区</a>
+        <a href="news.html">新闻通告</a>
+        <a href="services.html">便民服务</a>
+        <a href="divisions.html">部门</a>
+        <a href="jail.html">拘留所</a>
+        <a href="careers.html">招募</a>
+        <a href="contact.html">联系</a>
+        <a href="roster.html">警员名册</a>
+        <a href="informants.html" id="informantsLink" style="display: none"
+          >线人信息</a
+        >
+        <a href="contraband.html" id="contrabandLink" style="display: none"
+          >赃物上报</a
+        >
+        <a
+          href="contraband-admin.html"
+          id="contrabandAdminLink"
+          style="display: none"
+          >赃物管理</a
+        >
+        <a href="profile.html">个人资料</a>
+        <a href="login.html" id="loginLink">登录</a>
+        <a href="javascript:void(0)" id="logoutBtn" style="display: none"
+          >退出登录</a
+        >
+      </div>
+    </nav>
+
+    <!-- 主内容区 -->
+    <main class="container">
+      <h1>赃物管理</h1>
+      <p class="muted">
+        此页面列出所有上报的赃物，仅管理员可见。
+      </p>
+      <!-- 统计卡片容器 -->
+      <div id="statsKpis" class="kpis"></div>
+      <!-- 错误提示显示区 -->
+      <div id="err" style="color: var(--danger); margin-top: 12px; display: none"></div>
+      <!-- 加载状态 -->
+      <div id="loading" class="muted" style="margin-top: 12px">加载中...</div>
+      <!-- 赃物表格 -->
+      <table id="goodsTable" style="display: none; margin-top: 12px">
+        <thead>
+          <tr>
+            <th>物品名称</th>
+            <th>数量</th>
+            <th>描述</th>
+            <th>上报人</th>
+            <th>状态</th>
+            <th>上报时间</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody id="goodsBody"></tbody>
+      </table>
+    </main>
+
+    <!-- 核心脚本：用户登录、权限校验、数据加载以及统计渲染 -->
+    <script type="module">
+      import { auth, db, requireLogin, doLogout } from './assets/js/auth.js';
+      import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js';
+      import {
+        doc,
+        getDoc,
+        getDocs,
+        collection,
+        query,
+        orderBy,
+        updateDoc,
+        deleteDoc,
+      } from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js';
+
+      // 获取导航栏中的链接元素，便于登录状态切换
+      const loginLink = document.getElementById('loginLink');
+      const logoutBtn = document.getElementById('logoutBtn');
+      const informantsLink = document.getElementById('informantsLink');
+      const contrabandLink = document.getElementById('contrabandLink');
+      const contrabandAdminLink = document.getElementById('contrabandAdminLink');
+
+      // 全局错误处理：将脚本错误呈现在页面上，避免静默失败
+      window.addEventListener('error', (e) => {
+        const errDiv = document.getElementById('err');
+        if (errDiv) {
+          errDiv.style.display = 'block';
+          errDiv.textContent = '脚本错误：' + (e?.message || 'unknown');
+          document.getElementById('loading').style.display = 'none';
+        }
+      });
+
+      // 登录状态监听，切换导航栏显示
+      onAuthStateChanged(auth, async (user) => {
+        if (user) {
+          if (loginLink) loginLink.style.display = 'none';
+          if (logoutBtn) logoutBtn.style.display = 'inline';
+          if (informantsLink) informantsLink.style.display = 'inline';
+          if (contrabandLink) contrabandLink.style.display = 'inline';
+          // 检查是否管理员，决定是否显示赃物管理链接
+          try {
+            const emailLower = (user.email || '').toLowerCase();
+            const roleSnap = await getDoc(doc(db, 'roles', emailLower));
+            const isAdmin = roleSnap.exists() && roleSnap.data().admin === true;
+            if (isAdmin && contrabandAdminLink) contrabandAdminLink.style.display = 'inline';
+          } catch (e) {
+            console.error('无法判断管理员权限', e);
+          }
+        } else {
+          if (loginLink) loginLink.style.display = 'inline';
+          if (logoutBtn) logoutBtn.style.display = 'none';
+          if (informantsLink) informantsLink.style.display = 'none';
+          if (contrabandLink) contrabandLink.style.display = 'none';
+          if (contrabandAdminLink) contrabandAdminLink.style.display = 'none';
+        }
+      });
+
+      // 登出按钮绑定
+      if (logoutBtn) {
+        logoutBtn.addEventListener('click', async () => {
+          await doLogout();
+        });
+      }
+
+      // 主逻辑：要求已登录并具有管理员权限
+      requireLogin(async (user) => {
+        const emailLower = (user.email || '').toLowerCase();
+        const roleSnap = await getDoc(doc(db, 'roles', emailLower));
+        const isAdmin = roleSnap.exists() && roleSnap.data().admin === true;
+        if (!isAdmin) {
+          document.getElementById('loading').style.display = 'none';
+          const errDiv = document.getElementById('err');
+          errDiv.textContent = '您不是管理员，无法访问此页面。';
+          errDiv.style.display = 'block';
+          return;
+        }
+
+        // 初始化统计变量
+        let processedCount = 0;
+        let pendingCount = 0;
+        let totalQuantity = 0;
+        const categoryCounts = {};
+
+        const goodsBody = document.getElementById('goodsBody');
+        try {
+          const q = query(collection(db, 'contraband'), orderBy('createdAt', 'desc'));
+          const snapshot = await getDocs(q);
+          goodsBody.innerHTML = '';
+          snapshot.forEach((docSnap) => {
+            const data = docSnap.data();
+            // 累计状态统计
+            if (data.status && String(data.status).toLowerCase().startsWith('proc')) {
+              processedCount += 1;
+            } else {
+              pendingCount += 1;
+            }
+            // 累计物品类别总数
+            const item = data.itemName || '未知';
+            const qty = parseInt(data.quantity, 10) || 0;
+            totalQuantity += qty;
+            if (!categoryCounts[item]) categoryCounts[item] = 0;
+            categoryCounts[item] += qty;
+            // 构建表格行
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+              <td>${data.itemName || ''}</td>
+              <td style="text-align:center">${qty}</td>
+              <td>${(data.description || '').substring(0, 100)}</td>
+              <td>${data.user || ''}</td>
+              <td>${data.status || ''}</td>
+              <td>${data.createdAt ? new Date(data.createdAt.seconds * 1000).toLocaleString() : ''}</td>
+              <td style="white-space:nowrap">
+                <button class="btn btn-outline edit-btn" data-id="${docSnap.id}" style="margin-right:6px">编辑</button>
+                <button class="btn btn-primary delete-btn" data-id="${docSnap.id}">删除</button>
+              </td>
+            `;
+            goodsBody.appendChild(tr);
+          });
+
+          // 为编辑按钮绑定事件
+          document.querySelectorAll('.edit-btn').forEach((btn) => {
+            btn.addEventListener('click', async (e) => {
+              const id = e.target.getAttribute('data-id');
+              const docRef = doc(db, 'contraband', id);
+              try {
+                const snap = await getDoc(docRef);
+                if (!snap.exists()) return;
+                const data = snap.data();
+                const newName = window.prompt('修改物品名称', data.itemName);
+                const newQtyStr = window.prompt('修改数量', data.quantity);
+                const newDesc = window.prompt('修改描述', data.description);
+                const newStatus = window.prompt('修改状态', data.status || 'pending');
+                const updates = {};
+                if (newName !== null && newName.trim() !== '' && newName !== data.itemName) updates.itemName = newName.trim();
+                if (newQtyStr !== null) {
+                  const qVal = parseInt(newQtyStr, 10);
+                  if (!Number.isNaN(qVal) && qVal > 0 && qVal !== data.quantity) updates.quantity = qVal;
+                }
+                if (newDesc !== null && newDesc !== data.description) updates.description = newDesc;
+                if (newStatus !== null && newStatus !== data.status) updates.status = newStatus;
+                if (Object.keys(updates).length > 0) {
+                  await updateDoc(docRef, updates);
+                  alert('更新成功');
+                  window.location.reload();
+                }
+              } catch (err) {
+                console.error('更新失败', err);
+                alert('更新失败：' + err.message);
+              }
+            });
+          });
+          // 为删除按钮绑定事件
+          document.querySelectorAll('.delete-btn').forEach((btn) => {
+            btn.addEventListener('click', async (e) => {
+              const id = e.target.getAttribute('data-id');
+              if (!window.confirm('确定删除该记录吗？')) return;
+              try {
+                await deleteDoc(doc(db, 'contraband', id));
+                alert('删除成功');
+                window.location.reload();
+              } catch (err) {
+                console.error('删除失败', err);
+                alert('删除失败：' + err.message);
+              }
+            });
+          });
+          // 渲染统计卡片
+          const statsEl = document.getElementById('statsKpis');
+          /*
+           * 使用多张卡片呈现关键指标：已处理、未处理、总数量。
+           * 每个卡片包含一个颜色渐变徽章、一行大数字以及简短说明。
+           * 最后一张卡片跨越所有列，列出每种物品的总数，强调各类别的数量分布。
+           */
+          statsEl.innerHTML = `
+            <div class="card">
+              <span class="badge">已处理</span>
+              <h2>${processedCount}</h2>
+              <p class="muted">条赃物记录已处理</p>
+            </div>
+            <div class="card">
+              <span class="badge">未处理</span>
+              <h2>${pendingCount}</h2>
+              <p class="muted">条赃物记录待处理</p>
+            </div>
+            <div class="card">
+              <span class="badge">总数量</span>
+              <h2>${totalQuantity}</h2>
+              <p class="muted">赃物数量总和</p>
+            </div>
+            <div class="card" style="grid-column:1/-1">
+              <h3>各物品类别总数</h3>
+              <ul class="list">
+                ${Object.entries(categoryCounts)
+                  .map(([item, qty]) => `<li><strong>${item}</strong>：${qty}</li>`)
+                  .join('')}
+              </ul>
+            </div>
+          `;
+          // 显示表格并隐藏加载提示
+          document.getElementById('loading').style.display = 'none';
+          document.getElementById('goodsTable').style.display = 'table';
+        } catch (err) {
+          console.error(err);
+          const errDiv = document.getElementById('err');
+          errDiv.textContent = '加载赃物列表失败：' + err.message;
+          errDiv.style.display = 'block';
+          document.getElementById('loading').style.display = 'none';
+        }
+      });
+    </script>
+  </body>
+</html>
