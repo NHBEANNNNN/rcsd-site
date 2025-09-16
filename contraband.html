@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>赃物上报 - LSPD</title>
+  <link rel="stylesheet" href="assets/css/styles.css" />
+</head>
+<body>
+  <!-- 导航栏 -->
+  <nav class="nav" aria-label="主导航">
+    <div class="brand">
+      <img src="assets/img/LSPD LOGO.png" alt="LSPD logo" style="width:40px;height:40px;object-fit:contain" />
+      <span class="title">洛圣都城市警察局</span>
+    </div>
+    <div class="links">
+      <a href="index.html">首页</a>
+      <a href="videos.html">视频专区</a>
+      <a href="news.html">新闻通告</a>
+      <a href="services.html">便民服务</a>
+      <a href="divisions.html">部门</a>
+      <a href="jail.html">拘留所</a>
+      <a href="careers.html">招募</a>
+      <a href="contact.html">联系</a>
+      <a href="roster.html">警员名册</a>
+      <a href="informants.html" id="informantsLink" style="display:none;">线人信息</a>
+      <a href="contraband.html" id="contrabandLink" style="display:none;">赃物上报</a>
+      <a href="contraband-admin.html" id="contrabandAdminLink" style="display:none;">赃物管理</a>
+      <a href="profile.html">个人资料</a>
+      <a href="login.html" id="loginLink">登录</a>
+      <a href="javascript:void(0)" id="logoutBtn" style="display:none;">退出登录</a>
+    </div>
+  </nav>
+
+  <!-- 主内容 -->
+  <main class="container">
+    <h1>赃物上报</h1>
+    <p>此页面用于警员上报收缴的赃物信息，提交后只有管理员可以查看。</p>
+    <form id="stolenForm" style="margin-top:20px;max-width:600px;">
+      <div style="margin-bottom:12px;">
+        <label for="itemName">物品名称：</label>
+        <input type="text" id="itemName" required style="width:100%;padding:7px;border:1px solid #e5e7eb;border-radius:8px;" />
+      </div>
+      <div style="margin-bottom:12px;">
+        <label for="quantity">数量：</label>
+        <input type="number" id="quantity" required min="1" style="width:100%;padding:7px;border:1px solid #e5e7eb;border-radius:8px;" />
+      </div>
+      <div style="margin-bottom:12px;">
+        <label for="description">描述：</label>
+        <textarea id="description" rows="4" style="width:100%;padding:7px;border:1px solid #e5e7eb;border-radius:8px;"></textarea>
+      </div>
+      <button type="submit" class="btn btnPrimary">提交赃物</button>
+    </form>
+    <div id="msg" class="muted" style="margin-top:12px;"></div>
+    <section id="myGoodsSection" style="margin-top:32px;display:none;">
+      <h2>我的赃物记录</h2>
+      <table id="myGoodsTable" style="width:100%;border-collapse:collapse;margin-top:8px;">
+        <thead>
+          <tr>
+            <th style="padding:8px;border-bottom:1px solid #e5e7eb;">物品名称</th>
+            <th style="padding:8px;border-bottom:1px solid #e5e7eb;">数量</th>
+            <th style="padding:8px;border-bottom:1px solid #e5e7eb;">描述</th>
+            <th style="padding:8px;border-bottom:1px solid #e5e7eb;">状态</th>
+            <th style="padding:8px;border-bottom:1px solid #e5e7eb;">提交时间</th>
+          </tr>
+        </thead>
+        <tbody id="myGoodsBody"></tbody>
+      </table>
+    </section>
+  </main>
+
+  <!-- 脚本：认证与提交通逻辑 -->
+  <script type="module">
+    import { auth, db, requireLogin, doLogout } from './assets/js/auth.js';
+    import { collection, addDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js';
+    import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js';
+
+    const loginLink = document.getElementById('loginLink');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const informantsLink = document.getElementById('informantsLink');
+    const contrabandLink = document.getElementById('contrabandLink');
+    const contrabandAdminLink = document.getElementById('contrabandAdminLink');
+
+    // 根据登录状态显示/隐藏部分导航
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        loginLink.style.display = 'none';
+        logoutBtn.style.display = 'inline';
+        if (informantsLink) informantsLink.style.display = 'inline';
+        if (contrabandLink) contrabandLink.style.display = 'inline';
+        // 检查管理员权限决定赃物管理链接
+        try {
+          const { doc, getDoc } = await import('https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js');
+          const emailLower = (user.email || '').toLowerCase();
+          const roleSnap = await getDoc(doc(db, 'roles', emailLower));
+          const isAdmin = roleSnap.exists() && roleSnap.data().admin === true;
+          if (isAdmin && contrabandAdminLink) {
+            contrabandAdminLink.style.display = 'inline';
+          }
+        } catch (e) {
+          console.error('无法判断管理员权限', e);
+        }
+      } else {
+        loginLink.style.display = 'inline';
+        logoutBtn.style.display = 'none';
+        if (informantsLink) informantsLink.style.display = 'none';
+        if (contrabandLink) contrabandLink.style.display = 'none';
+        if (contrabandAdminLink) contrabandAdminLink.style.display = 'none';
+      }
+    });
+
+    logoutBtn.addEventListener('click', async () => {
+      await doLogout();
+    });
+
+    // 保护：必须登录
+    requireLogin((user) => {
+      const form = document.getElementById('stolenForm');
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const itemName = document.getElementById('itemName').value.trim();
+        const quantity = parseInt(document.getElementById('quantity').value, 10);
+        const description = document.getElementById('description').value.trim();
+        if (!itemName || !quantity) {
+          document.getElementById('msg').textContent = '请输入必填项。';
+          return;
+        }
+        try {
+          // 使用 owner 字段与 Firestore 规则匹配，同时保留 user 字段供展示
+          const email = user.email || '';
+          await addDoc(collection(db, 'contraband'), {
+            owner: email,
+            user: email.toLowerCase(),
+            itemName,
+            quantity,
+            description,
+            status: 'pending',
+            createdAt: serverTimestamp()
+          });
+          document.getElementById('msg').textContent = '提交成功，等待管理员审核。';
+          form.reset();
+          // 重新加载自己的记录
+          loadMyGoods((user.email || '').toLowerCase());
+        } catch (err) {
+          console.error(err);
+          document.getElementById('msg').textContent = '提交失败：' + err.message;
+        }
+      });
+      // 首次加载用户记录
+      loadMyGoods((user.email || '').toLowerCase());
+    });
+
+    // 加载当前用户的赃物记录
+    async function loadMyGoods(email) {
+      const mySection = document.getElementById('myGoodsSection');
+      const tbody = document.getElementById('myGoodsBody');
+      try {
+        const { query, where, getDocs } = await import('https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js');
+        const q = query(collection(db, 'contraband'), where('user', '==', email));
+        const snap = await getDocs(q);
+        const rows = [];
+        snap.forEach(docSnap => {
+          const data = docSnap.data();
+          rows.push(data);
+        });
+        // 按时间倒序
+        rows.sort((a, b) => {
+          const at = a.createdAt ? a.createdAt.seconds : 0;
+          const bt = b.createdAt ? b.createdAt.seconds : 0;
+          return bt - at;
+        });
+        tbody.innerHTML = '';
+        rows.forEach(data => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td style="padding:8px;border-bottom:1px solid #e5e7eb;">${data.itemName || ''}</td>
+            <td style="padding:8px;border-bottom:1px solid #e5e7eb;text-align:center;">${data.quantity || ''}</td>
+            <td style="padding:8px;border-bottom:1px solid #e5e7eb;">${(data.description || '').substring(0,100)}</td>
+            <td style="padding:8px;border-bottom:1px solid #e5e7eb;">${data.status || ''}</td>
+            <td style="padding:8px;border-bottom:1px solid #e5e7eb;">${data.createdAt ? new Date(data.createdAt.seconds * 1000).toLocaleString() : ''}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+        mySection.style.display = rows.length > 0 ? 'block' : 'none';
+      } catch (err) {
+        console.error('加载记录失败', err);
+      }
+    }
+  </script>
+</body>
+</html>
