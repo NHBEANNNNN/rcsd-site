@@ -6,31 +6,31 @@
     "callsign": "PC-1",
     "division": "Administration",
     "badge": "0001",
-    "status": "Active",
+    "status": "Inactive",
     "photo": "assets/img/jm.png",
     "bio": "负责制定和执行警队的发展战略、治安方针和重大决策,跨境案件、国际警务合作,负责警队高级人事任免，制定纪律规范,政府负责，接受政策指导。"
   },
   {
    "id": "2",
    "name": "华 比恩（H.Bean）",
-   "rank": "副局长（行动）（DCP）",
-   "callsign": "PC-66",
+   "rank": "局长 (CP）",
+   "callsign": "PC-1",
    "division": "Administration",
    "badge": "0066",
    "status": "Active",
    "photo": "assets/img/hb.png",
-   "bio": "专门负责一线执法与治安行动，确保街头巡逻、刑事侦查、特警、反恐、交通等前线运作顺畅。"
+   "bio": "负责制定和执行警队的发展战略、治安方针和重大决策,跨境案件、国际警务合作,负责警队高级人事任免，制定纪律规范,政府负责，接受政策指导。"
   },
   {
     "id": "3",
     "name": "陈 懿",
-    "rank": "副局长（管理）（DCP)",
+    "rank": "空司主管（管理）（ACP)",
     "callsign": "PC-91",
-    "division": "Administration",
+    "division": "Air Support Team",
     "badge": "0091",
     "status": "Active",
     "photo": "assets/img/cy.png",
-    "bio": "人事管理（警员招募、晋升、纪律、福利）财务与预算（警队年度开支、装备采购）培训与教育（警校、进修课程、领导力发展）。"
+    "bio": "主管空中单位支援，负责警局直升机事务。"
   },
   { 
    "id": "4",
@@ -41,7 +41,7 @@
    "badge": "0006",
    "status": "Active",
    "photo": "assets/img/jb.png",
-   "bio": "主管警探刑事案件，重大案件负责人。"
+   "bio": "主管警探刑事案件，重大，恐怖袭击案件负责人。"
   },
   { 
    "id": "5",
@@ -57,16 +57,27 @@
   {
    "id": "6",
    "name": "迈尔斯 布莱克",
-   "rank": "三级警员(PCIII）",
-   "callsign": "PC-43",
+   "rank": "高级中尉(Lt.II）",
+   "callsign": "PC-27",
    "division": "Patrol",
-   "badge": "0043",
+   "badge": "0027",
    "status": "Active",
    "photo": "assets/img/placeholder_officer.svg",
    "bio": "警员。"
   },
   {
    "id": "7",
+   "name": "威廉 卡特",
+   "rank": "警佐(Sgt.）",
+   "callsign": "PC-28",
+   "division": "CID",
+   "badge": "0028",
+   "status": "Active",
+   "photo": "assets/img/bb10.png",
+   "bio": "负责市区各种刑事重案有组织犯罪。"
+  },
+  {
+   "id": "8",
    "name": "乔丹 杰斯",
    "rank": "二级警员（PCII）",
    "callsign": "RC-60",
