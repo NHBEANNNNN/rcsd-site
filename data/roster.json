@@ -12,39 +12,28 @@
   },
   {
    "id": "2",
-   "name": "华 比恩（H.Bean）",
+   "name": "赛文 伊莱文",
    "rank": "局长 (CP）",
    "callsign": "PC-1",
    "division": "Administration",
    "badge": "0066",
    "status": "Active",
-   "photo": "assets/img/hb.png",
+   "photo": "assets/img/cy.png",
    "bio": "负责制定和执行警队的发展战略、治安方针和重大决策,跨境案件、国际警务合作,负责警队高级人事任免，制定纪律规范,政府负责，接受政策指导。"
   },
   {
     "id": "3",
     "name": "陈 懿",
-    "rank": "空司主管（管理）（ACP)",
-    "callsign": "PC-91",
+    "rank": "助理局长（ACP)",
+    "callsign": "PC-2",
     "division": "Air Support Team",
-    "badge": "0091",
+    "badge": "002",
     "status": "Active",
-    "photo": "assets/img/cy.png",
-    "bio": "主管空中单位支援，负责警局直升机事务。"
+    "photo": "assets/img/hb.png",
+    "bio": "主管警局日常事务，会议，重大案件主管。"
   },
   { 
    "id": "4",
-   "name": "伯顿 简",
-   "rank": "反黑主管（ACP）",
-   "callsign": "PC-06",
-   "division": "CID",
-   "badge": "0006",
-   "status": "Active",
-   "photo": "assets/img/jb.png",
-   "bio": "主管警探刑事案件，重大，恐怖袭击案件负责人。"
-  },
-  { 
-   "id": "5",
    "name": "周 星星",
    "rank": "高级上尉（SC）",
    "callsign": "PC-81",
@@ -55,7 +44,7 @@
    "bio": "勇气勋章获得者，普巡作战专家。"
   },
   {
-   "id": "6",
+   "id": "5",
    "name": "迈尔斯 布莱克",
    "rank": "高级中尉(Lt.II）",
    "callsign": "PC-27",
@@ -66,7 +55,7 @@
    "bio": "警员。"
   },
   {
-   "id": "7",
+   "id": "6",
    "name": "威廉 卡特",
    "rank": "警佐(Sgt.）",
    "callsign": "PC-28",
@@ -77,7 +66,7 @@
    "bio": "负责市区各种刑事重案有组织犯罪。"
   },
   {
-   "id": "8",
+   "id": "7",
    "name": "乔丹 杰斯",
    "rank": "二级警员（PCII）",
    "callsign": "RC-60",
