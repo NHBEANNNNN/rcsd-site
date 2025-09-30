@@ -1,4 +1,5 @@
-<!doctype html>
+
+   <!doctype html>
 <html lang="zh-CN">
 <head>
   <meta charset="utf-8">
@@ -7,7 +8,6 @@
   <link rel="stylesheet" href="assets/css/styles.css">
   <script defer src="assets/js/news.js?v=3"></script>
   <style>
-    /* 仅防止无样式环境太丑，可删 */
     .card{padding:16px;border:1px solid #e5e7eb;border-radius:12px;background:#fff}
     .form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
     .full{grid-column:1/-1} .inline{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
@@ -19,7 +19,6 @@
 </head>
 <body>
 
-  <!-- 顶部导航（含 LOGO） -->
   <nav class="nav" aria-label="主导航">
     <div class="bar" style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px">
       <div class="brand" style="display:flex;align-items:center;gap:10px">
@@ -45,30 +44,33 @@
 
   <main class="container" style="padding:16px">
     <h1>加入我们 · 市民自主投递</h1>
-    <p>请如实填写 OC 信息。两种提交路径：</p>
+    <p>请选择真实、清晰的 OC 信息。两种提交路径：</p>
     <ul>
-      <li><b>调转提交：</b>已有他国警局经历（现实/角色世界）。</li>
-      <li><b>警校培训提交：</b>无履历，从零进入警校培训。</li>
+      <li><b>调转提交：</b>已有他国警局经历者。</li>
+      <li><b>警校培训提交：</b>无履历者，申请警校培训。</li>
     </ul>
 
-    <form id="applyForm" class="card" novalidate>
+    <form action="https://formspree.io/f/mdkwgjkr" method="POST" class="card" novalidate>
       <input type="hidden" name="submitType" id="submitType" value="academy">
+      <input type="hidden" name="_subject" value="【SAHP 招募】新申请">
+      <!-- <input type="hidden" name="_redirect" value="https://nhbeannnnn.github.io/rcsd-site/thankyou.html"> -->
+      <input type="text" name="_gotcha" style="display:none">
 
       <div class="form-grid">
         <label>
           <span>OC 年龄 <em>*</em></span>
-          <input type="number" name="ocAge" min="14" max="70" required placeholder="例如 18">
+          <input type="number" name="ocAge" min="14" max="70" required placeholder="例如 21">
         </label>
 
         <fieldset class="full">
-          <legend>是否在其他国家警局工作过<em>*</em></legend>
+          <legend>是否在其他国家警局工作过（现实/角色世界）<em>*</em></legend>
           <div class="inline">
             <label><input type="radio" name="workedAbroad" value="yes" required> 是</label>
             <label><input type="radio" name="workedAbroad" value="no" required> 否</label>
           </div>
           <label class="full" id="countriesWrap" style="display:none;margin-top:8px">
-            <span>请列出国家名称（用逗号分隔）</span>
-            <input type="text" name="countries" placeholder="半R,全R+国家名字…">
+            <span>请列出国家名称（逗号分隔）</span>
+            <input type="text" name="countries" placeholder="美国, 新加坡, 香港…">
           </label>
         </fieldset>
 
@@ -104,18 +106,18 @@
           <span>联系/备注（可选）</span>
           <input type="text" name="contact" placeholder="Discord、QQ、电话">
         </label>
-
-        <label class="full" style="display:flex;gap:8px;align-items:center">
-          <input type="checkbox" name="consent" required>
-          <span>我承诺以上为真实 OC 信息，并同意用于 SAHP 资格审查。</span>
-        </label>
       </div>
 
       <div class="actions" style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px">
-        <button type="button" class="btn" id="btnTransfer">调转提交</button>
-        <button type="button" class="btn primary" id="btnAcademy">警校培训提交</button>
+        <button type="submit" class="btn"
+                onclick="document.getElementById('submitType').value='transfer'">
+          调转提交
+        </button>
+        <button type="submit" class="btn primary"
+                onclick="document.getElementById('submitType').value='academy'">
+          警校培训提交
+        </button>
       </div>
-      <output id="formMsg" style="display:block;margin-top:8px;color:#6b7280"></output>
     </form>
   </main>
 
@@ -124,74 +126,12 @@
   </footer>
 
   <script>
-    // ——— 基础交互：有他国经历 → 显示国家输入 ———
     document.addEventListener('change', (e) => {
       if (e.target.name === 'workedAbroad') {
         document.getElementById('countriesWrap').style.display =
           (e.target.value === 'yes') ? 'block' : 'none';
       }
     });
-
-    const form = document.getElementById('applyForm');
-    const msg = document.getElementById('formMsg');
-
-    function validate() {
-      if (!form.checkValidity()) {
-        form.reportValidity();
-        return false;
-      }
-      const worked = form.workedAbroad.value;
-      if (worked === 'yes' && !form.countries.value.trim()) {
-        alert('请选择“是”后，请填写国家名称（逗号分隔）');
-        form.countries.focus();
-        return false;
-      }
-      return true;
-    }
-
-    function collect(submitType) {
-      return {
-        submitType,
-        ocAge: form.ocAge.value.trim(),
-        workedAbroad: form.workedAbroad.value,
-        countries: (form.countries?.value || '').trim(),
-        stressReady: form.stressReady.value,
-        stressNotes: (form.stressNotes?.value || '').trim(),
-        bodycam: form.bodycam.value,
-        clearMic: form.clearMic.value,
-        contact: (form.contact?.value || '').trim(),
-      };
-    }
-
-    function openMailTo(payload) {
-      const to = "Sky75088@icloud.com"; // 你的邮箱
-      const subject = `【SAHP 招募-${payload.submitType === 'transfer' ? '调转' : '警校'}】申请`;
-      const lines = [
-        `提交类型: ${payload.submitType}`,
-        `OC年龄: ${payload.ocAge}`,
-        `他国经历: ${payload.workedAbroad}${payload.countries ? '（' + payload.countries + '）' : ''}`,
-        `执法压力: ${payload.stressReady}${payload.stressNotes ? '（' + payload.stressNotes + '）' : ''}`,
-        `Bodycam: ${payload.bodycam}`,
-        `麦克风: ${payload.clearMic}`,
-        `联系/备注: ${payload.contact || '（未填）'}`,
-        '',
-        '※ 此邮件由申请表单自动生成。'
-      ];
-      const body = encodeURIComponent(lines.join('\n'));
-      const url = `mailto:${encodeURIComponent(to)}?subject=${encodeURIComponent(subject)}&body=${body}`;
-      // 跳转到本机邮件客户端（用户点“发送”即可）
-      window.location.href = url;
-    }
-
-    function handleSubmit(type) {
-      if (!validate()) return;
-      const data = collect(type);
-      openMailTo(data);
-      msg.textContent = '已生成邮件草稿，请在弹出的邮件应用中确认并发送。';
-    }
-
-    document.getElementById('btnTransfer').addEventListener('click', () => handleSubmit('transfer'));
-    document.getElementById('btnAcademy').addEventListener('click', () => handleSubmit('academy'));
   </script>
 </body>
 </html>
