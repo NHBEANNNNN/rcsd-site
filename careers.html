@@ -3,50 +3,196 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>招募- SAHP</title>
+  <title>招募 - SAHP</title>
   <link rel="stylesheet" href="assets/css/styles.css">
-  <!-- 保留你的 news.js，引入放在这里也可以；加 v 参数避免缓存 -->
   <script defer src="assets/js/news.js?v=3"></script>
+  <style>
+    /* 仅防止无样式环境太丑，可删 */
+    .card{padding:16px;border:1px solid #e5e7eb;border-radius:12px;background:#fff}
+    .form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+    .full{grid-column:1/-1} .inline{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+    .btn{padding:10px 14px;border-radius:10px;border:1px solid transparent;background:#e5e7eb;cursor:pointer}
+    .btn.primary{background:#111827;color:#fff}
+    input[type="text"],input[type="number"],textarea{width:100%;padding:10px 12px;border:1px solid #e5e7eb;border-radius:8px}
+    @media (max-width:768px){.form-grid{grid-template-columns:1fr}}
+  </style>
 </head>
 <body>
 
+  <!-- 顶部导航（含 LOGO） -->
   <nav class="nav" aria-label="主导航">
-    <div class="bar">
-      <div class="brand">
-        <img src="assets/img/SAHP.png" alt="Sheriff star">
-        <div class="title">圣安地列斯州高速巡警</div>
-        <div style="font-size:12px;color:var(--muted)">LSan Andreas Highway Patrol·</div>
+    <div class="bar" style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px">
+      <div class="brand" style="display:flex;align-items:center;gap:10px">
+        <img src="assets/img/SAHP.png" alt="SAHP Logo" style="height:48px">
+        <div>
+          <div class="title" style="font-weight:700">圣安地列斯州高速巡警</div>
+          <div style="font-size:12px;color:#6b7280">San Andreas Highway Patrol</div>
+        </div>
       </div>
-
-      <div class="links">
-        <a href="index.html" class="">首页</a>
-        <a href="videos.html" class="">视频专区</a>
-        <a href="news.html" class="active">新闻通告</a>
-        <a href="services.html" class="">便民服务</a>
-        <a href="divisions.html" class="">部门</a>
-        <a href="jail.html" class="">拘留所</a>
-        <a href="careers.html" class="">招募</a>
-        <a href="contact.html" class="">联系</a>
-        <a href="roster.html" class="">警员名册</a>
-        <a href="informants.html" id="informantsLink" style="display:none;">线人信息</a>
+      <div class="links" style="display:flex;gap:10px;flex-wrap:wrap">
+        <a href="index.html">首页</a>
+        <a href="videos.html">视频专区</a>
+        <a href="news.html">新闻通告</a>
+        <a href="services.html">便民服务</a>
+        <a href="divisions.html">部门</a>
+        <a href="jail.html">拘留所</a>
+        <a href="careers.html" class="active">招募</a>
+        <a href="contact.html">联系</a>
+        <a href="roster.html">警员名册</a>
       </div>
     </div>
   </nav>
-  
-  <main class="container">
-    <h1>加入我们 · 招募</h1>
-    <p>欢迎加入洛圣都城市警察局（LSPD） 团队：</p>
+
+  <main class="container" style="padding:16px">
+    <h1>加入我们 · 市民自主投递</h1>
+    <p>请如实填写 OC 信息。两种提交路径：</p>
     <ul>
-      <li>基础要求：遵守服务器规则，麦克风正常，尊重他人，</li>
-      <li>培训：新兵训练（P.A.T.R.O.L），电台规范、交通拦检、武力使用原则</li>
-      <li>进阶：通过考核后可申请 Patrol / S.W.A.T. / Detentions 等部门</li>
+      <li><b>调转提交：</b>已有他国警局经历（现实/角色世界）。</li>
+      <li><b>警校培训提交：</b>无履历，从零进入警校培训。</li>
     </ul>
-    <p>申请方式：<b>前往K端LSPD区或者选择国内前往警局</b></p>
+
+    <form id="applyForm" class="card" novalidate>
+      <input type="hidden" name="submitType" id="submitType" value="academy">
+
+      <div class="form-grid">
+        <label>
+          <span>OC 年龄 <em>*</em></span>
+          <input type="number" name="ocAge" min="14" max="70" required placeholder="例如 21">
+        </label>
+
+        <fieldset class="full">
+          <legend>是否在其他国家警局工作过（现实/角色世界）<em>*</em></legend>
+          <div class="inline">
+            <label><input type="radio" name="workedAbroad" value="yes" required> 是</label>
+            <label><input type="radio" name="workedAbroad" value="no" required> 否</label>
+          </div>
+          <label class="full" id="countriesWrap" style="display:none;margin-top:8px">
+            <span>请列出国家名称（用逗号分隔）</span>
+            <input type="text" name="countries" placeholder="美国, 新加坡, 香港…">
+          </label>
+        </fieldset>
+
+        <fieldset class="full">
+          <legend>是否能扛得住执法压力（高压、舆情、夜勤等）<em>*</em></legend>
+          <div class="inline">
+            <label><input type="radio" name="stressReady" value="yes" required> 可以</label>
+            <label><input type="radio" name="stressReady" value="no" required> 暂不可以</label>
+          </div>
+          <label class="full" style="margin-top:8px">
+            <span>补充说明（可选）</span>
+            <textarea name="stressNotes" rows="3" placeholder="例如：能接受夜勤/有冲突沟通经验…"></textarea>
+          </label>
+        </fieldset>
+
+        <fieldset>
+          <legend>可否使用执法记录仪（Bodycam）<em>*</em></legend>
+          <div class="inline">
+            <label><input type="radio" name="bodycam" value="yes" required> 可以</label>
+            <label><input type="radio" name="bodycam" value="no" required> 不可以</label>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>是否具备清晰的麦克风（语音沟通）<em>*</em></legend>
+          <div class="inline">
+            <label><input type="radio" name="clearMic" value="yes" required> 是</label>
+            <label><input type="radio" name="clearMic" value="no" required> 否</label>
+          </div>
+        </fieldset>
+
+        <label class="full">
+          <span>联系/备注（可选）</span>
+          <input type="text" name="contact" placeholder="Discord、QQ、电话">
+        </label>
+
+        <label class="full" style="display:flex;gap:8px;align-items:center">
+          <input type="checkbox" name="consent" required>
+          <span>我承诺以上为真实 OC 信息，并同意用于 SAHP 资格审查。</span>
+        </label>
+      </div>
+
+      <div class="actions" style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px">
+        <button type="button" class="btn" id="btnTransfer">调转提交</button>
+        <button type="button" class="btn primary" id="btnAcademy">警校培训提交</button>
+      </div>
+      <output id="formMsg" style="display:block;margin-top:8px;color:#6b7280"></output>
+    </form>
   </main>
-  
-  <footer class="footer">
-    — 本站为SAHP执法机构。紧急情况请拨打 SAHP报警电话。
+
+  <footer class="footer" style="padding:12px 16px;color:#6b7280">
+    — 本站为 SAHP 执法机构。紧急情况请拨打 SAHP 报警电话。
   </footer>
 
+  <script>
+    // ——— 基础交互：有他国经历 → 显示国家输入 ———
+    document.addEventListener('change', (e) => {
+      if (e.target.name === 'workedAbroad') {
+        document.getElementById('countriesWrap').style.display =
+          (e.target.value === 'yes') ? 'block' : 'none';
+      }
+    });
+
+    const form = document.getElementById('applyForm');
+    const msg = document.getElementById('formMsg');
+
+    function validate() {
+      if (!form.checkValidity()) {
+        form.reportValidity();
+        return false;
+      }
+      const worked = form.workedAbroad.value;
+      if (worked === 'yes' && !form.countries.value.trim()) {
+        alert('请选择“是”后，请填写国家名称（逗号分隔）');
+        form.countries.focus();
+        return false;
+      }
+      return true;
+    }
+
+    function collect(submitType) {
+      return {
+        submitType,
+        ocAge: form.ocAge.value.trim(),
+        workedAbroad: form.workedAbroad.value,
+        countries: (form.countries?.value || '').trim(),
+        stressReady: form.stressReady.value,
+        stressNotes: (form.stressNotes?.value || '').trim(),
+        bodycam: form.bodycam.value,
+        clearMic: form.clearMic.value,
+        contact: (form.contact?.value || '').trim(),
+      };
+    }
+
+    function openMailTo(payload) {
+      const to = "Sky75088@icloud.com"; // 你的邮箱
+      const subject = `【SAHP 招募-${payload.submitType === 'transfer' ? '调转' : '警校'}】申请`;
+      const lines = [
+        `提交类型: ${payload.submitType}`,
+        `OC年龄: ${payload.ocAge}`,
+        `他国经历: ${payload.workedAbroad}${payload.countries ? '（' + payload.countries + '）' : ''}`,
+        `执法压力: ${payload.stressReady}${payload.stressNotes ? '（' + payload.stressNotes + '）' : ''}`,
+        `Bodycam: ${payload.bodycam}`,
+        `麦克风: ${payload.clearMic}`,
+        `联系/备注: ${payload.contact || '（未填）'}`,
+        '',
+        '※ 此邮件由申请表单自动生成。'
+      ];
+      const body = encodeURIComponent(lines.join('\n'));
+      const url = `mailto:${encodeURIComponent(to)}?subject=${encodeURIComponent(subject)}&body=${body}`;
+      // 跳转到本机邮件客户端（用户点“发送”即可）
+      window.location.href = url;
+    }
+
+    function handleSubmit(type) {
+      if (!validate()) return;
+      const data = collect(type);
+      openMailTo(data);
+      msg.textContent = '已生成邮件草稿，请在弹出的邮件应用中确认并发送。';
+    }
+
+    document.getElementById('btnTransfer').addEventListener('click', () => handleSubmit('transfer'));
+    document.getElementById('btnAcademy').addEventListener('click', () => handleSubmit('academy'));
+  </script>
 </body>
 </html>
+
