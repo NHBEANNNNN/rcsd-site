@@ -1,138 +1,76 @@
+<form action="https://formspree.io/f/mdkwgjkr" method="POST" class="card" novalidate>
+  <input type="hidden" name="submitType" id="submitType" value="academy">
+  <input type="hidden" name="_subject" value="【SAHP 招募】新申请">
+  <input type="text" name="_gotcha" style="display:none">
 
-   <!doctype html>
-<html lang="zh-CN">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>招募 - SAHP</title>
-  <link rel="stylesheet" href="assets/css/styles.css">
-  <script defer src="assets/js/news.js?v=3"></script>
-  <style>
-    .card{padding:16px;border:1px solid #e5e7eb;border-radius:12px;background:#fff}
-    .form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
-    .full{grid-column:1/-1} .inline{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
-    .btn{padding:10px 14px;border-radius:10px;border:1px solid transparent;background:#e5e7eb;cursor:pointer}
-    .btn.primary{background:#111827;color:#fff}
-    input[type="text"],input[type="number"],textarea{width:100%;padding:10px 12px;border:1px solid #e5e7eb;border-radius:8px}
-    @media (max-width:768px){.form-grid{grid-template-columns:1fr}}
-  </style>
-</head>
-<body>
+  <div class="form-grid">
+    <!-- 新增名字字段 -->
+    <label class="full">
+      <span>名字 <em>*</em></span>
+      <input type="text" name="fullname" required placeholder="请输入您的IC名">
+    </label>
 
-  <nav class="nav" aria-label="主导航">
-    <div class="bar" style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px">
-      <div class="brand" style="display:flex;align-items:center;gap:10px">
-        <img src="assets/img/SAHP.png" alt="SAHP Logo" style="height:48px">
-        <div>
-          <div class="title" style="font-weight:700">圣安地列斯州高速巡警</div>
-          <div style="font-size:12px;color:#6b7280">San Andreas Highway Patrol</div>
-        </div>
+    <label>
+      <span>OC 年龄 <em>*</em></span>
+      <input type="number" name="ocAge" min="14" max="70" required placeholder="例如 18">
+    </label>
+
+    <fieldset class="full">
+      <legend>是否在其他国家警局工作过（现实/角色世界）<em>*</em></legend>
+      <div class="inline">
+        <label><input type="radio" name="workedAbroad" value="yes" required> 是</label>
+        <label><input type="radio" name="workedAbroad" value="no" required> 否</label>
       </div>
-      <div class="links" style="display:flex;gap:10px;flex-wrap:wrap">
-        <a href="index.html">首页</a>
-        <a href="videos.html">视频专区</a>
-        <a href="news.html">新闻通告</a>
-        <a href="services.html">便民服务</a>
-        <a href="divisions.html">部门</a>
-        <a href="jail.html">拘留所</a>
-        <a href="careers.html" class="active">招募</a>
-        <a href="contact.html">联系</a>
-        <a href="roster.html">警员名册</a>
+      <label class="full" id="countriesWrap" style="display:none;margin-top:8px">
+        <span>请列出国家名称（用逗号分隔）</span>
+        <input type="text" name="countries" placeholder="半R 全R服务器名字…">
+      </label>
+    </fieldset>
+
+    <fieldset class="full">
+      <legend>是否能扛得住执法压力（高压、舆情、夜勤等）<em>*</em></legend>
+      <div class="inline">
+        <label><input type="radio" name="stressReady" value="yes" required> 可以</label>
+        <label><input type="radio" name="stressReady" value="no" required> 暂不可以</label>
       </div>
-    </div>
-  </nav>
+      <label class="full" style="margin-top:8px">
+        <span>补充说明（可选）</span>
+        <textarea name="stressNotes" rows="3" placeholder="例如：能接受夜勤/有冲突沟通经验…"></textarea>
+      </label>
+    </fieldset>
 
-  <main class="container" style="padding:16px">
-    <h1>加入我们 · 市民自主投递</h1>
-    <p>请选择真实、清晰的 OC 信息。两种提交路径：</p>
-    <ul>
-      <li><b>调转提交：</b>已有他国警局经历者。</li>
-      <li><b>警校培训提交：</b>无履历者，申请警校培训。</li>
-    </ul>
-
-    <form action="https://formspree.io/f/mdkwgjkr" method="POST" class="card" novalidate>
-      <input type="hidden" name="submitType" id="submitType" value="academy">
-      <input type="hidden" name="_subject" value="【SAHP 招募】新申请">
-      <!-- <input type="hidden" name="_redirect" value="https://nhbeannnnn.github.io/rcsd-site/thankyou.html"> -->
-      <input type="text" name="_gotcha" style="display:none">
-
-      <div class="form-grid">
-        <label>
-          <span>OC 年龄 <em>*</em></span>
-          <input type="number" name="ocAge" min="14" max="70" required placeholder="例如 21">
-        </label>
-
-        <fieldset class="full">
-          <legend>是否在其他国家警局工作过（现实/角色世界）<em>*</em></legend>
-          <div class="inline">
-            <label><input type="radio" name="workedAbroad" value="yes" required> 是</label>
-            <label><input type="radio" name="workedAbroad" value="no" required> 否</label>
-          </div>
-          <label class="full" id="countriesWrap" style="display:none;margin-top:8px">
-            <span>请列出国家名称（逗号分隔）</span>
-            <input type="text" name="countries" placeholder="美国, 新加坡, 香港…">
-          </label>
-        </fieldset>
-
-        <fieldset class="full">
-          <legend>是否能扛得住执法压力（高压、舆情、夜勤等）<em>*</em></legend>
-          <div class="inline">
-            <label><input type="radio" name="stressReady" value="yes" required> 可以</label>
-            <label><input type="radio" name="stressReady" value="no" required> 暂不可以</label>
-          </div>
-          <label class="full" style="margin-top:8px">
-            <span>补充说明（可选）</span>
-            <textarea name="stressNotes" rows="3" placeholder="例如：能接受夜勤/有冲突沟通经验…"></textarea>
-          </label>
-        </fieldset>
-
-        <fieldset>
-          <legend>可否使用执法记录仪（Bodycam）<em>*</em></legend>
-          <div class="inline">
-            <label><input type="radio" name="bodycam" value="yes" required> 可以</label>
-            <label><input type="radio" name="bodycam" value="no" required> 不可以</label>
-          </div>
-        </fieldset>
-
-        <fieldset>
-          <legend>是否具备清晰的麦克风（语音沟通）<em>*</em></legend>
-          <div class="inline">
-            <label><input type="radio" name="clearMic" value="yes" required> 是</label>
-            <label><input type="radio" name="clearMic" value="no" required> 否</label>
-          </div>
-        </fieldset>
-
-        <label class="full">
-          <span>联系/备注（可选）</span>
-          <input type="text" name="contact" placeholder="Discord、QQ、电话">
-        </label>
+    <fieldset>
+      <legend>可否使用执法记录仪（Bodycam）<em>*</em></legend>
+      <div class="inline">
+        <label><input type="radio" name="bodycam" value="yes" required> 可以</label>
+        <label><input type="radio" name="bodycam" value="no" required> 不可以</label>
       </div>
+    </fieldset>
 
-      <div class="actions" style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px">
-        <button type="submit" class="btn"
-                onclick="document.getElementById('submitType').value='transfer'">
-          调转提交
-        </button>
-        <button type="submit" class="btn primary"
-                onclick="document.getElementById('submitType').value='academy'">
-          警校培训提交
-        </button>
+    <fieldset>
+      <legend>是否具备清晰的麦克风（语音沟通）<em>*</em></legend>
+      <div class="inline">
+        <label><input type="radio" name="clearMic" value="yes" required> 是</label>
+        <label><input type="radio" name="clearMic" value="no" required> 否</label>
       </div>
-    </form>
-  </main>
+    </fieldset>
 
-  <footer class="footer" style="padding:12px 16px;color:#6b7280">
-    — 本站为 SAHP 执法机构。紧急情况请拨打 SAHP 报警电话。
-  </footer>
+    <label class="full">
+      <span>联系/备注（可选）</span>
+      <input type="text" name="contact" placeholder="Discord、QQ、电话">
+    </label>
+  </div>
 
-  <script>
-    document.addEventListener('change', (e) => {
-      if (e.target.name === 'workedAbroad') {
-        document.getElementById('countriesWrap').style.display =
-          (e.target.value === 'yes') ? 'block' : 'none';
-      }
-    });
-  </script>
-</body>
-</html>
+  <div class="actions" style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px">
+    <button type="submit" class="btn"
+            onclick="document.getElementById('submitType').value='transfer'">
+      调转提交
+    </button>
+    <button type="submit" class="btn primary"
+            onclick="document.getElementById('submitType').value='academy'">
+      警校培训提交
+    </button>
+  </div>
+</form>
+
 
